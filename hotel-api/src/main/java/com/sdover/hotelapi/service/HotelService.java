@@ -10,14 +10,30 @@ import com.sdover.hotelapi.model.Hotel;
 @Service
 public class HotelService {
 
-    public List<Hotel> obtenerHoteles() {
+    List<Hotel> hoteles = new ArrayList<>();
 
-        List<Hotel> hoteles = new ArrayList<>();
+    public HotelService() {
 
-        hoteles.add(new Hotel("Hotel Palace", "Madrid", 5));
-        hoteles.add(new Hotel("Hotel Atlántico", "A Coruña", 4));
-        hoteles.add(new Hotel("Hotel Costa", "Valencia", 3));
+        // Crear hoteles demo
+        hoteles.add(new Hotel(1L, "Hotel Palace", "Madrid", 5));
+        hoteles.add(new Hotel(2L, "Hotel Atlántico", "A Coruña", 4));
+        hoteles.add(new Hotel(3L, "Hotel Costa", "Valencia", 3));
+    
+    }
+
+    public List<Hotel> obtenerHoteles() {    
 
         return hoteles;
+
     }
+
+    public Hotel obtenerHotel(Long id) {
+
+        return hoteles.stream()
+        .filter(hotel -> hotel.getId().equals(id))
+        .findFirst()
+        .orElse(null);
+
+    }
+
 }
