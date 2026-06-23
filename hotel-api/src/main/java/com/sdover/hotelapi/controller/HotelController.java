@@ -2,6 +2,7 @@ package com.sdover.hotelapi.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,9 +31,19 @@ public class HotelController {
     }
 
     @GetMapping("/{id}")
-    public Hotel obtenerHotel(@PathVariable Long id) {
+    public ResponseEntity<Hotel> obtenerHotel(@PathVariable Long id) {
 
-        return hotelService.obtenerHotel(id);
-        
+        Hotel hotel = hotelService.obtenerHotel(id);
+
+        if (hotel != null) {
+
+            return ResponseEntity.ok(hotel);
+
+        } else {
+
+            return ResponseEntity.notFound().build();
+
+        }  
+
     }
 }
