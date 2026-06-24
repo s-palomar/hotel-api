@@ -1,0 +1,27 @@
+GET http://localhost:8080/api/hoteles
+
+###
+
+GET http://localhost:8080/api/hoteles/2
+
+###
+POST http://localhost:8080/api/hoteles
+Content-Type: application/json
+
+{
+    "id": 4,
+    "nombre": "Hotel Sol",
+    "ciudad": "Málaga",
+    "categoria": 4
+} 
+
+###
+POST http://localhost:8080/api/hoteles
+Content-Type: application/json
+
+{
+    "id": 5,
+    "nombre": "Hotel Luna",
+    "ciudad": "Benidorm",
+    "categoria": 3
+}

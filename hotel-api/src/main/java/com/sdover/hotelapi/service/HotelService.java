@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.sdover.hotelapi.exception.HotelYaExisteException;
 import com.sdover.hotelapi.model.Hotel;
 
 @Service
@@ -34,6 +35,21 @@ public class HotelService {
         .findFirst()
         .orElse(null);
 
+    }
+
+    public Hotel crearHotel(Hotel nuevoHotel) {
+
+        for (Hotel h : hoteles) {
+            if (h.getId().equals(nuevoHotel.getId())) {
+
+                throw new HotelYaExisteException("Ya existe un hotel con el id " + h.getId());
+
+            } 
+        } 
+        
+        hoteles.add(nuevoHotel);
+
+        return nuevoHotel;
     }
 
 }
