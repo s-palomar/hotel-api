@@ -1,27 +1,84 @@
+### Crear hotel en Madrid
+POST http://localhost:8080/api/hoteles
+Content-Type: application/json
+
+{
+    "nombre": "Hotel Palace",
+    "ciudad": "Madrid",
+    "categoria": 5
+}
+
+### Crear hotel en A Coruña
+POST http://localhost:8080/api/hoteles
+Content-Type: application/json
+
+{
+  "nombre": "Hotel Atlántico",
+  "ciudad": "A Coruña",
+  "categoria": 4
+}
+
+###
+
+### Crear hotel en Madrid 2
+POST http://localhost:8080/api/hoteles
+Content-Type: application/json
+
+{
+  "nombre": "Hotel Centro",
+  "ciudad": "Madrid",
+  "categoria": 3
+}
+
+###
+
+### Crear hotel en Valencia
+POST http://localhost:8080/api/hoteles
+Content-Type: application/json
+
+{
+  "nombre": "Hotel Costa",
+  "ciudad": "Valencia",
+  "categoria": 5
+}
+
+###
+
+### Crear hotel en A Coruña 2
+POST http://localhost:8080/api/hoteles
+Content-Type: application/json
+
+{
+  "nombre": "Hotel Torre",
+  "ciudad": "A Coruña",
+  "categoria": 2
+}
+
+### Obtener todos los hoteles
 GET http://localhost:8080/api/hoteles
 
-###
+### Buscar hoteles en Madrid
+GET http://localhost:8080/api/hoteles?ciudad=Madrid
 
-GET http://localhost:8080/api/hoteles/2
-
-###
-POST http://localhost:8080/api/hoteles
-Content-Type: application/json
-
-{
-    "id": 4,
-    "nombre": "Hotel Sol",
-    "ciudad": "Málaga",
-    "categoria": 4
-} 
+### Buscar hoteles de categoría 4
+GET http://localhost:8080/api/hoteles?categoria=4
 
 ###
-POST http://localhost:8080/api/hoteles
-Content-Type: application/json
 
-{
-    "id": 5,
-    "nombre": "Hotel Luna",
-    "ciudad": "Benidorm",
-    "categoria": 3
-}
+### Buscar hoteles de categoría 5
+GET http://localhost:8080/api/hoteles?categoria=5
+
+###
+
+### Buscar hoteles de categoría 1 (si no hay, debería devolver 404)
+GET http://localhost:8080/api/hoteles?categoria=1
+
+### Buscar hoteles en Madrid de categoría 3
+GET http://localhost:8080/api/hoteles?ciudad=Madrid&categoria=3
+
+### Buscar hoteles en Madrid de categoría 5
+GET http://localhost:8080/api/hoteles?ciudad=Madrid&categoria=5
+
+### Buscar hoteles en Madrid de categoría 1
+GET http://localhost:8080/api/hoteles?ciudad=Madrid&categoria=1
+
