@@ -23,7 +23,7 @@ public class Hotel {
 
     @Min(value = 1, message = "La categoría mínima es 1")
     @Max(value = 5, message = "La categoría máxima es 5")
-    private int categoria;
+    private Integer categoria; // usamos Integer distinguir valores null
 
     public Hotel () {}
     
@@ -31,7 +31,7 @@ public class Hotel {
         Long id,
         String nombre,
         String ciudad,
-        int categoria
+        Integer categoria
     ) {
 
         this.id = id;
@@ -65,11 +65,11 @@ public class Hotel {
         this.ciudad = ciudad;
     }
 
-    public int getCategoria() {
+    public Integer getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(int categoria) {
+    public void setCategoria(Integer categoria) {
         this.categoria = categoria;
     }
 

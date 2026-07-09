@@ -82,3 +82,36 @@ GET http://localhost:8080/api/hoteles?ciudad=Madrid&categoria=5
 ### Buscar hoteles en Madrid de categoría 1
 GET http://localhost:8080/api/hoteles?ciudad=Madrid&categoria=1
 
+### PATCH - cambiar solo la categoría del hotel 1
+PATCH http://localhost:8080/api/hoteles/1
+Content-Type: application/json
+
+{
+  "categoria": 4
+}
+
+###
+
+### PATCH - cambiar solo el nombre del hotel 1
+PATCH http://localhost:8080/api/hoteles/1
+Content-Type: application/json
+
+{
+  "nombre": "Hotel Palace Premium"
+}
+
+###
+
+### PATCH - cambiar ciudad y categoría del hotel 3
+PATCH http://localhost:8080/api/hoteles/3
+Content-Type: application/json
+
+{
+  "ciudad": "Barcelona",
+  "categoria": 5
+}
+
+###
+
+### Ver todos los hoteles después de los cambios
+GET http://localhost:8080/api/hoteles

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.sdover.hotelapi.HotelRepository;
 import com.sdover.hotelapi.exception.HotelNoEncontradoException;
-import com.sdover.hotelapi.exception.HotelYaExisteException;
 import com.sdover.hotelapi.model.Hotel;
 
 @Service
@@ -66,7 +65,7 @@ public class HotelService {
         return hoteles;
     }
 
-    public List<Hotel> buscarPorCategoria(int categoria) {
+    public List<Hotel> buscarPorCategoria(Integer categoria) {
 
         List<Hotel> hoteles = hotelRepository.findByCategoria(categoria);
 
@@ -78,7 +77,7 @@ public class HotelService {
         return hoteles;
     }
 
-    public List<Hotel> buscarPorCiudadYCategoria(String ciudad, int categoria) {
+    public List<Hotel> buscarPorCiudadYCategoria(String ciudad, Integer categoria) {
 
         List<Hotel> hoteles = hotelRepository.findByCiudadAndCategoria(ciudad, categoria);
 
@@ -89,6 +88,27 @@ public class HotelService {
 
         return hoteles;
     }
+
+    public Hotel actualizarParcialHotel(Long id, Hotel datosParciales) {
+
+        Hotel hotel = hotelRepository.findById(id)
+            .orElseThrow(() -> new HotelNoEncontradoException("No existe hotel con id " + id));
+
+        if (datosParciales.getNombre() != null) {
+            hotel.setNombre(datosParciales.getNombre());
+        }
+
+        if (datosParciales.getCiudad() != null) {
+            hotel.setCiudad(datosParciales.getCiudad());
+        }
+
+        if (datosParciales.getCategoria() != null) {
+            hotel.setCategoria(datosParciales.getCategoria());
+        }
+
+        return hotelRepository.save(hotel);
+    }
+
 
 }
 
