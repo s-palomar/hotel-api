@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.sdover.hotelapi.HotelRepository;
+import com.sdover.hotelapi.dto.HotelRequest;
+import com.sdover.hotelapi.dto.HotelResponse;
 import com.sdover.hotelapi.exception.HotelNoEncontradoException;
 import com.sdover.hotelapi.model.Hotel;
 
@@ -18,23 +20,39 @@ public class HotelService {
         this.hotelRepository = hotelRepository;
     }      
 
-    public List<Hotel> obtenerHoteles() {    
-
-        return hotelRepository.findAll(); // findAll devuelve una lista
+    public List<HotelResponse> obtenerHoteles() {
+        return hotelRepository.findAll()
+                .stream()
+                .map(this::convertirAResponse)
+                .toList();
     }
 
-    public Hotel obtenerHotel(Long id) {
+    public HotelResponse obtenerHotel(Long id) {
 
-        return hotelRepository.findById(id)
+        Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new HotelNoEncontradoException("No existe hotel con id " + id));
+
+        return convertirAResponse(hotel);
     }
 
-    public Hotel crearHotel(Hotel nuevoHotel) {
+    public HotelResponse crearHotel(HotelRequest request) {
+
+        Hotel hotel = new Hotel();
+        hotel.setNombre(request.getNombre());
+        hotel.setCiudad(request.getCiudad());
+        hotel.setCategoria(request.getCategoria());
+
+        Hotel hotelGuardado = hotelRepository.save(hotel);
         
-        return hotelRepository.save(nuevoHotel);
+        return new HotelResponse(
+            hotelGuardado.getId(),
+            hotelGuardado.getNombre(),
+            hotelGuardado.getCiudad(),
+            hotelGuardado.getCategoria()
+        );
     }
 
-    public Hotel actualizarHotel(Long id, Hotel datosActualizados) {
+    public HotelResponse actualizarHotel(Long id, Hotel datosActualizados) {
 
         Hotel hotel = hotelRepository.findById(id)
             .orElseThrow(() -> new HotelNoEncontradoException("No existe hotel con id " + id));
@@ -43,7 +61,9 @@ public class HotelService {
         hotel.setCiudad(datosActualizados.getCiudad());
         hotel.setCategoria(datosActualizados.getCategoria());
 
-        return hotelRepository.save(hotel);
+        Hotel hotelActualizado = hotelRepository.save(hotel);
+
+        return convertirAResponse(hotelActualizado);
     }
 
     public void borrarHotel(Long id) {
@@ -54,7 +74,7 @@ public class HotelService {
         hotelRepository.delete(hotel);         
     }
 
-    public List<Hotel> buscarPorCiudad(String ciudad) {
+    public List<HotelResponse> buscarPorCiudad(String ciudad) {
 
         List<Hotel> hoteles = hotelRepository.findByCiudad(ciudad);
 
@@ -62,10 +82,12 @@ public class HotelService {
             throw new HotelNoEncontradoException("No existen hoteles en la ciudad " + ciudad);
         }
 
-        return hoteles;
+        return hoteles.stream()
+            .map(this::convertirAResponse)
+            .toList();
     }
 
-    public List<Hotel> buscarPorCategoria(Integer categoria) {
+    public List<HotelResponse> buscarPorCategoria(Integer categoria) {
 
         List<Hotel> hoteles = hotelRepository.findByCategoria(categoria);
 
@@ -74,10 +96,12 @@ public class HotelService {
             throw new HotelNoEncontradoException("No existen hoteles con la categoria " + categoria);
         }
 
-        return hoteles;
+        return hoteles.stream()
+            .map(this::convertirAResponse)
+            .toList();
     }
 
-    public List<Hotel> buscarPorCiudadYCategoria(String ciudad, Integer categoria) {
+    public List<HotelResponse> buscarPorCiudadYCategoria(String ciudad, Integer categoria) {
 
         List<Hotel> hoteles = hotelRepository.findByCiudadAndCategoria(ciudad, categoria);
 
@@ -86,10 +110,12 @@ public class HotelService {
             throw new HotelNoEncontradoException("No existen hoteles en " + ciudad + " con la categoria " + categoria);
         }
 
-        return hoteles;
+        return hoteles.stream()
+            .map(this::convertirAResponse)
+            .toList();
     }
 
-    public Hotel actualizarParcialHotel(Long id, Hotel datosParciales) {
+    public HotelResponse actualizarParcialHotel(Long id, Hotel datosParciales) {
 
         Hotel hotel = hotelRepository.findById(id)
             .orElseThrow(() -> new HotelNoEncontradoException("No existe hotel con id " + id));
@@ -106,9 +132,19 @@ public class HotelService {
             hotel.setCategoria(datosParciales.getCategoria());
         }
 
-        return hotelRepository.save(hotel);
+        Hotel hotelActualizado = hotelRepository.save(hotel);
+
+        return convertirAResponse(hotelActualizado);
     }
 
+    // Convertir Hotel -> HotelResponse
+    private HotelResponse convertirAResponse(Hotel hotel) {
+        return new HotelResponse(
+                hotel.getId(),
+                hotel.getNombre(),
+                hotel.getCiudad(),
+                hotel.getCategoria());
+    }
 
 }
 

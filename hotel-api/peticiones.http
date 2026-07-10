@@ -1,12 +1,18 @@
+### =========================
+### CREAR HOTELES
+### =========================
+
 ### Crear hotel en Madrid
 POST http://localhost:8080/api/hoteles
 Content-Type: application/json
 
 {
-    "nombre": "Hotel Palace",
-    "ciudad": "Madrid",
-    "categoria": 5
+  "nombre": "Hotel Palace",
+  "ciudad": "Madrid",
+  "categoria": 5
 }
+
+###
 
 ### Crear hotel en A Coruña
 POST http://localhost:8080/api/hoteles
@@ -54,11 +60,38 @@ Content-Type: application/json
   "categoria": 2
 }
 
+###
+
+### Crear hotel en Bilbao
+POST http://localhost:8080/api/hoteles
+Content-Type: application/json
+
+{
+  "nombre": "Hotel DTO",
+  "ciudad": "Bilbao",
+  "categoria": 4
+}
+
+###
+
+### =========================
+### CONSULTAS GET
+### =========================
+
 ### Obtener todos los hoteles
 GET http://localhost:8080/api/hoteles
 
+###
+
 ### Buscar hoteles en Madrid
 GET http://localhost:8080/api/hoteles?ciudad=Madrid
+
+###
+
+### Buscar hoteles en Bilbao
+GET http://localhost:8080/api/hoteles?ciudad=Bilbao
+
+###
 
 ### Buscar hoteles de categoría 4
 GET http://localhost:8080/api/hoteles?categoria=4
@@ -70,48 +103,137 @@ GET http://localhost:8080/api/hoteles?categoria=5
 
 ###
 
-### Buscar hoteles de categoría 1 (si no hay, debería devolver 404)
+### Buscar hoteles de categoría 1 (debería devolver 404)
 GET http://localhost:8080/api/hoteles?categoria=1
 
-### Buscar hoteles en Madrid de categoría 3
-GET http://localhost:8080/api/hoteles?ciudad=Madrid&categoria=3
+###
 
 ### Buscar hoteles en Madrid de categoría 5
 GET http://localhost:8080/api/hoteles?ciudad=Madrid&categoria=5
 
-### Buscar hoteles en Madrid de categoría 1
+###
+
+### Buscar hoteles en Madrid de categoría 1 (debería devolver 404)
 GET http://localhost:8080/api/hoteles?ciudad=Madrid&categoria=1
 
-### PATCH - cambiar solo la categoría del hotel 1
-PATCH http://localhost:8080/api/hoteles/1
+### Obtener hotel por id existente
+GET http://localhost:8080/api/hoteles/1
+
+###
+
+### Obtener hotel por id inexistente
+GET http://localhost:8080/api/hoteles/999
+
+### =========================
+### PUT
+### =========================
+
+### Actualizar hotel completo
+PUT http://localhost:8080/api/hoteles/1
 Content-Type: application/json
 
 {
+  "nombre": "Hotel Palace Renovado",
+  "ciudad": "Madrid",
+  "categoria": 4
+}
+
+### Actualizar hotel 1 completo con PUT
+PUT http://localhost:8080/api/hoteles/1
+Content-Type: application/json
+
+{
+  "nombre": "Hotel Palace Renovado",
+  "ciudad": "Madrid",
   "categoria": 4
 }
 
 ###
 
-### PATCH - cambiar solo el nombre del hotel 1
-PATCH http://localhost:8080/api/hoteles/1
-Content-Type: application/json
-
-{
-  "nombre": "Hotel Palace Premium"
-}
+### Ver hotel 1 después del PUT
+GET http://localhost:8080/api/hoteles/1
 
 ###
 
-### PATCH - cambiar ciudad y categoría del hotel 3
-PATCH http://localhost:8080/api/hoteles/3
+### Probar PUT sobre un id inexistente
+PUT http://localhost:8080/api/hoteles/999
 Content-Type: application/json
 
 {
-  "ciudad": "Barcelona",
+  "nombre": "Hotel Fantasma",
+  "ciudad": "Sevilla",
+  "categoria": 3
+}
+
+### =========================
+### PATCH
+### =========================
+
+### Cambiar solo la categoría del hotel 2
+PATCH http://localhost:8080/api/hoteles/2
+Content-Type: application/json
+
+{
   "categoria": 5
 }
 
 ###
 
-### Ver todos los hoteles después de los cambios
+### Cambiar solo el nombre del hotel 3
+PATCH http://localhost:8080/api/hoteles/3
+Content-Type: application/json
+
+{
+  "nombre": "Hotel Centro Premium"
+}
+
+### Cambiar solo la categoría del hotel 2
+PATCH http://localhost:8080/api/hoteles/2
+Content-Type: application/json
+
+{
+  "categoria": 5
+}
+
+###
+
+### Cambiar solo el nombre del hotel 3
+PATCH http://localhost:8080/api/hoteles/3
+Content-Type: application/json
+
+{
+  "nombre": "Hotel Centro Premium"
+}
+
+###
+
+### Cambiar ciudad y categoría del hotel 4
+PATCH http://localhost:8080/api/hoteles/4
+Content-Type: application/json
+
+{
+  "ciudad": "Sevilla",
+  "categoria": 4
+}
+
+###
+
+### Probar PATCH sobre un id inexistente
+PATCH http://localhost:8080/api/hoteles/999
+Content-Type: application/json
+
+{
+  "nombre": "Hotel Fantasma"
+}
+
+### =========================
+### DELETE
+### =========================
+
+### Borrar hotel 4
+DELETE http://localhost:8080/api/hoteles/4
+
+###
+
+### Ver todos los hoteles después de cambios
 GET http://localhost:8080/api/hoteles

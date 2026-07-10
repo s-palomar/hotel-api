@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sdover.hotelapi.dto.HotelRequest;
+import com.sdover.hotelapi.dto.HotelResponse;
 import com.sdover.hotelapi.model.Hotel;
 import com.sdover.hotelapi.service.HotelService;
 
@@ -33,22 +35,21 @@ public class HotelController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Hotel> obtenerHotel(@PathVariable Long id) {
+    public ResponseEntity<HotelResponse> obtenerHotel(@PathVariable Long id) {
 
         return ResponseEntity.ok(hotelService.obtenerHotel(id));
     }
 
     @PostMapping
-    public ResponseEntity<Hotel> crearHotel(@Valid @RequestBody Hotel hotel) { // @Valid aplica validaciones @NotBlank de Hotel
+    public ResponseEntity<HotelResponse> crearHotel(@RequestBody HotelRequest request) {
 
-        Hotel nuevoHotel = hotelService.crearHotel(hotel);
+        HotelResponse nuevoHotel = hotelService.crearHotel(request);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                            .body(nuevoHotel);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoHotel);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Hotel> actualizarHotel(@PathVariable Long id, @RequestBody Hotel datosActualizados) {
+    public ResponseEntity<HotelResponse> actualizarHotel(@PathVariable Long id, @RequestBody Hotel datosActualizados) {
 
         return ResponseEntity.ok(hotelService.actualizarHotel(id, datosActualizados));
     }
@@ -61,7 +62,7 @@ public class HotelController {
     }
 
     @GetMapping
-    public List<Hotel> obtenerHoteles(
+    public List<HotelResponse> obtenerHoteles(
             @RequestParam(required = false) String ciudad,
             @RequestParam(required = false) Integer categoria) {
 
@@ -80,7 +81,7 @@ public class HotelController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Hotel> actualizarParcialHotel(@PathVariable Long id, @RequestBody Hotel datosParciales) {
+    public ResponseEntity<HotelResponse> actualizarParcialHotel(@PathVariable Long id, @RequestBody Hotel datosParciales) {
 
         return ResponseEntity.ok(hotelService.actualizarParcialHotel(id, datosParciales));
     }
