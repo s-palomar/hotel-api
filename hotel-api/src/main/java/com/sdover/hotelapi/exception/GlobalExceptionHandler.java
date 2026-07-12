@@ -1,7 +1,13 @@
 package com.sdover.hotelapi.exception;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -36,4 +42,28 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> manejarErroresValidacion(MethodArgumentNotValidException ex) {
+
+        Map<String, String> tipoError = new HashMap<>();
+        List<FieldError> errores = ex.getBindingResult().getFieldErrors();
+
+        for (FieldError error : errores) {
+
+             String campo = error.getField();
+             String mensaje = error.getDefaultMessage(); 
+
+             tipoError.put(campo, mensaje);             
+        }
+
+        ErrorResponse error = new ErrorResponse(
+                "Los datos enviados no son válidos",
+                HttpStatus.BAD_REQUEST.value(),
+                tipoError
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(error);
+    }
 }

@@ -74,6 +74,66 @@ Content-Type: application/json
 
 ###
 
+### Nombre vacío
+POST http://localhost:8080/api/hoteles
+Content-Type: application/json
+
+{
+  "nombre": "",
+  "ciudad": "Madrid",
+  "categoria": 4
+}
+
+###
+
+### Ciudad vacía
+POST http://localhost:8080/api/hoteles
+Content-Type: application/json
+
+{
+  "nombre": "Hotel Prueba",
+  "ciudad": "",
+  "categoria": 4
+}
+
+###
+
+### Categoría menor que 1
+POST http://localhost:8080/api/hoteles
+Content-Type: application/json
+
+{
+  "nombre": "Hotel Prueba",
+  "ciudad": "Madrid",
+  "categoria": 0
+}
+
+###
+
+### Categoría mayor que 5
+POST http://localhost:8080/api/hoteles
+Content-Type: application/json
+
+{
+  "nombre": "Hotel Prueba",
+  "ciudad": "Madrid",
+  "categoria": 6
+}
+
+###
+
+### Varios errores
+POST http://localhost:8080/api/hoteles
+Content-Type: application/json
+
+{
+  "nombre": "",
+  "ciudad": "",
+  "categoria": 9
+}
+
+###
+
 ### =========================
 ### CONSULTAS GET
 ### =========================

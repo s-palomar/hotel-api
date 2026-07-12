@@ -41,7 +41,7 @@ public class HotelController {
     }
 
     @PostMapping
-    public ResponseEntity<HotelResponse> crearHotel(@RequestBody HotelRequest request) {
+    public ResponseEntity<HotelResponse> crearHotel(@Valid @RequestBody HotelRequest request) {
 
         HotelResponse nuevoHotel = hotelService.crearHotel(request);
 
@@ -49,7 +49,7 @@ public class HotelController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<HotelResponse> actualizarHotel(@PathVariable Long id, @RequestBody Hotel datosActualizados) {
+    public ResponseEntity<HotelResponse> actualizarHotel(@Valid @PathVariable Long id, @RequestBody Hotel datosActualizados) {
 
         return ResponseEntity.ok(hotelService.actualizarHotel(id, datosActualizados));
     }
@@ -81,7 +81,7 @@ public class HotelController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<HotelResponse> actualizarParcialHotel(@PathVariable Long id, @RequestBody Hotel datosParciales) {
+    public ResponseEntity<HotelResponse> actualizarParcialHotel(@Valid @PathVariable Long id, @RequestBody Hotel datosParciales) {
 
         return ResponseEntity.ok(hotelService.actualizarParcialHotel(id, datosParciales));
     }
