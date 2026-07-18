@@ -1,9 +1,12 @@
 package com.sdover.hotelapi.model;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Hotel {
@@ -16,6 +19,9 @@ public class Hotel {
     private String nombre;
     private String ciudad;
     private Integer categoria; // usamos Integer distinguir valores null
+
+    @OneToMany(mappedBy = "hotel")
+    private List<Habitacion> habitaciones;
 
     public Hotel () {}
     
@@ -63,6 +69,14 @@ public class Hotel {
 
     public void setCategoria(Integer categoria) {
         this.categoria = categoria;
+    }
+
+    public List<Habitacion> getHabitaciones() {
+        return habitaciones;
+    }
+
+    public void setHabitaciones(List<Habitacion> habitaciones) {
+        this.habitaciones = habitaciones;
     }
 
 }
