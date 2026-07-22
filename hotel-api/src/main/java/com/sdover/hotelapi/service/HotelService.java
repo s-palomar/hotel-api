@@ -20,21 +20,6 @@ public class HotelService {
         this.hotelRepository = hotelRepository;
     }      
 
-    public List<HotelResponse> obtenerHoteles() {
-        return hotelRepository.findAll()
-                .stream()
-                .map(this::convertirAResponse)
-                .toList();
-    }
-
-    public HotelResponse obtenerHotel(Long id) {
-
-        Hotel hotel = hotelRepository.findById(id)
-                .orElseThrow(() -> new HotelNoEncontradoException("No existe hotel con id " + id));
-
-        return convertirAResponse(hotel);
-    }
-
     public HotelResponse crearHotel(HotelRequest request) {
 
         Hotel hotel = new Hotel();
@@ -50,6 +35,22 @@ public class HotelService {
             hotelGuardado.getCiudad(),
             hotelGuardado.getCategoria()
         );
+    }
+
+    public List<HotelResponse> obtenerHoteles() {
+        
+        return hotelRepository.findAll()
+                .stream()
+                .map(this::convertirAResponse)
+                .toList();
+    }
+
+    public HotelResponse obtenerHotel(Long id) {
+
+        Hotel hotel = hotelRepository.findById(id)
+                .orElseThrow(() -> new HotelNoEncontradoException("No existe hotel con id " + id));
+
+        return convertirAResponse(hotel);
     }
 
     public HotelResponse actualizarHotel(Long id, Hotel datosActualizados) {
