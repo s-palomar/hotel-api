@@ -29,6 +29,19 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
+    @ExceptionHandler(HabitacionNoEncontradaException.class)
+        public ResponseEntity<ErrorResponse> manejarHabitacionNoEncontrada(
+                HabitacionNoEncontradaException e) {
+
+        ErrorResponse error = new ErrorResponse(
+                e.getMessage(),
+                HttpStatus.NOT_FOUND.value());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(error);
+        }
+
     @ExceptionHandler(HotelYaExisteException.class)
     public ResponseEntity<ErrorResponse> manejarHotelYaExiste(HotelYaExisteException e) {
 

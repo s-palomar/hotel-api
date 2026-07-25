@@ -1,0 +1,106 @@
+#######################################
+### HABITACIONES
+#######################################
+
+### Crear hotel en Madrid
+POST http://localhost:8080/api/hoteles
+Content-Type: application/json
+
+{
+  "nombre": "Hotel Palace",
+  "ciudad": "Madrid",
+  "categoria": 5
+}
+
+###
+
+### Crear hotel en Vigo
+POST http://localhost:8080/api/hoteles
+Content-Type: application/json
+
+{
+  "nombre": "Hotel Atlántico",
+  "ciudad": "Vigo",
+  "categoria": 4
+}
+
+###
+
+### Crear habitación 101 en Hotel 1
+
+POST http://localhost:8080/api/habitaciones/hotel/1
+Content-Type: application/json
+
+{
+    "numero": "101",
+    "precioBase": 95
+}
+
+### Crear habitación 102 en Hotel 1
+
+POST http://localhost:8080/api/habitaciones/hotel/1
+Content-Type: application/json
+
+{
+    "numero": "102",
+    "precioBase": 110
+}
+
+### Crear habitación 201 en Hotel 1
+
+POST http://localhost:8080/api/habitaciones/hotel/1
+Content-Type: application/json
+
+{
+    "numero": "201",
+    "precioBase": 150
+}
+
+### Crear habitación 101 en Hotel 2
+
+POST http://localhost:8080/api/habitaciones/hotel/2
+Content-Type: application/json
+
+{
+    "numero": "101",
+    "precioBase": 85
+}
+
+### Crear habitación 102 en Hotel 2
+
+POST http://localhost:8080/api/habitaciones/hotel/2
+Content-Type: application/json
+
+{
+    "numero": "102",
+    "precioBase": 90
+}
+
+### =========================
+### CONSULTAS GET
+### =========================
+
+### Obtener todas las habitaciones de hotel 1
+GET http://localhost:8080/api/habitaciones/hotel/1
+
+### Obtener todas las habitaciones de hotel 2
+GET http://localhost:8080/api/habitaciones/hotel/2
+
+### Obtener habitación 1
+GET http://localhost:8080/api/habitaciones/1
+
+### Obtener habitación no existente
+GET http://localhost:8080/api/habitaciones/999
+
+### Actualizar habitación
+PUT http://localhost:8080/api/habitaciones/1
+Content-Type: application/json
+
+{
+    "numero": "101A",
+    "precioBase": 115
+}
+
+### Eliminar habitación
+DELETE http://localhost:8080/api/habitaciones/1
+
