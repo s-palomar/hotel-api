@@ -1,8 +1,11 @@
 package com.sdover.hotelapi.dto;
 
+import com.sdover.hotelapi.model.TipoHabitacion;
+
 public class HabitacionResponse {
 
     private Long id;
+    private TipoHabitacion tipoHabitacion;
     private String numero;
     private Double precioBase;
 
@@ -10,12 +13,22 @@ public class HabitacionResponse {
 
     public HabitacionResponse (
         Long id,
+        TipoHabitacion tipoHabitacion,
         String numero,
         Double precioBase
     ) {
         this.id = id;
+        this.tipoHabitacion = tipoHabitacion;
         this.numero = numero;
         this.precioBase = precioBase;
+    }
+
+    public TipoHabitacion getTipoHabitacion() {
+        return tipoHabitacion;
+    }
+
+    public void setTipoHabitacion(TipoHabitacion tipoHabitacion) {
+        this.tipoHabitacion = tipoHabitacion;
     }
 
     public Long getId() {
@@ -41,5 +54,4 @@ public class HabitacionResponse {
     public void setPrecioBase(Double precioBase) {
         this.precioBase = precioBase;
     }
-
 }

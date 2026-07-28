@@ -1,4 +1,4 @@
-package com.sdover.hotelapi;
+package com.sdover.hotelapi.repository;
 
 import java.util.List;
 
@@ -13,5 +13,4 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
     List<Hotel> findByCategoria(Integer categoria);
 
     List<Hotel> findByCiudadAndCategoria(String ciudad, Integer categoria);
-
 }

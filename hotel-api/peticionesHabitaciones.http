@@ -26,8 +26,47 @@ Content-Type: application/json
 
 ###
 
-### Crear habitación 101 en Hotel 1
+### Crear habitación individual
+POST http://localhost:8080/api/habitaciones/hotel/1
+Content-Type: application/json
 
+{
+    "numero": "101",
+    "precioBase": 75.0,
+    "tipoHabitacion": "INDIVIDUAL"
+}
+
+### Crear habitación doble
+POST http://localhost:8080/api/habitaciones/hotel/1
+Content-Type: application/json
+
+{
+    "numero": "102",
+    "precioBase": 110.0,
+    "tipoHabitacion": "DOBLE"
+}
+
+### Crear suite
+POST http://localhost:8080/api/habitaciones/hotel/1
+Content-Type: application/json
+
+{
+    "numero": "201",
+    "precioBase": 220.0,
+    "tipoHabitacion": "SUITE"
+}
+
+### Crear habitación doble en otro hotel
+POST http://localhost:8080/api/habitaciones/hotel/2
+Content-Type: application/json
+
+{
+    "numero": "301",
+    "precioBase": 120.0,
+    "tipoHabitacion": "DOBLE"
+}
+
+### Crear habitación 101 en Hotel 1
 POST http://localhost:8080/api/habitaciones/hotel/1
 Content-Type: application/json
 
@@ -37,7 +76,6 @@ Content-Type: application/json
 }
 
 ### Crear habitación 102 en Hotel 1
-
 POST http://localhost:8080/api/habitaciones/hotel/1
 Content-Type: application/json
 
@@ -47,7 +85,6 @@ Content-Type: application/json
 }
 
 ### Crear habitación 201 en Hotel 1
-
 POST http://localhost:8080/api/habitaciones/hotel/1
 Content-Type: application/json
 
@@ -57,7 +94,6 @@ Content-Type: application/json
 }
 
 ### Crear habitación 101 en Hotel 2
-
 POST http://localhost:8080/api/habitaciones/hotel/2
 Content-Type: application/json
 
@@ -67,7 +103,6 @@ Content-Type: application/json
 }
 
 ### Crear habitación 102 en Hotel 2
-
 POST http://localhost:8080/api/habitaciones/hotel/2
 Content-Type: application/json
 
@@ -79,6 +114,12 @@ Content-Type: application/json
 ### =========================
 ### CONSULTAS GET
 ### =========================
+
+### Obtener habitación individual
+GET http://localhost:8080/api/habitaciones/22
+
+### Obtener habitación por ID
+GET http://localhost:8080/api/habitaciones/1
 
 ### Obtener todas las habitaciones de hotel 1
 GET http://localhost:8080/api/habitaciones/hotel/1
@@ -104,3 +145,11 @@ Content-Type: application/json
 ### Eliminar habitación
 DELETE http://localhost:8080/api/habitaciones/1
 
+### Error: tipo de habitación obligatorio
+POST http://localhost:8080/api/habitaciones/hotel/1
+Content-Type: application/json
+
+{
+    "numero": "103",
+    "precioBase": 90.0
+}

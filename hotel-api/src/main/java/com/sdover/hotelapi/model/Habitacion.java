@@ -1,6 +1,8 @@
 package com.sdover.hotelapi.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,6 +16,9 @@ public class Habitacion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    private TipoHabitacion tipoHabitacion;
+
     private String numero;
     private Double precioBase;
 
@@ -26,11 +31,13 @@ public class Habitacion {
 
     public Habitacion (
         Long id,
+        TipoHabitacion tipoHabitacion,
         String numero,
         Double precioBase,
         Hotel hotel
     ) {
         this.id = id;
+        this.tipoHabitacion = tipoHabitacion;
         this.numero = numero;
         this.precioBase = precioBase;
         this.hotel = hotel;
@@ -38,10 +45,18 @@ public class Habitacion {
 
     public Long getId() {
     return id;
-}
+    }
 
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public TipoHabitacion getTipoHabitacion() {
+        return tipoHabitacion;
+    }
+
+    public void setTipoHabitacion(TipoHabitacion tipoHabitacion) {
+        this.tipoHabitacion = tipoHabitacion;
     }
 
     public String getNumero() {
@@ -62,7 +77,7 @@ public class Habitacion {
 
     public Hotel getHotel() {
     return hotel;
-}
+    }
 
     public void setHotel(Hotel hotel) {
         this.hotel = hotel;

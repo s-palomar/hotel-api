@@ -1,4 +1,4 @@
-package com.sdover.hotelapi;
+package com.sdover.hotelapi.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

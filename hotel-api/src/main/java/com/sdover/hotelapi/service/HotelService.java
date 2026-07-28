@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.sdover.hotelapi.HotelRepository;
 import com.sdover.hotelapi.dto.HotelRequest;
 import com.sdover.hotelapi.dto.HotelResponse;
 import com.sdover.hotelapi.exception.HotelNoEncontradoException;
 import com.sdover.hotelapi.model.Hotel;
+import com.sdover.hotelapi.repository.HotelRepository;
 
 @Service
 public class HotelService {
