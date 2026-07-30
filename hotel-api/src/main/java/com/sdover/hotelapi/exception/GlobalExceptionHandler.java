@@ -30,8 +30,21 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HabitacionNoEncontradaException.class)
-        public ResponseEntity<ErrorResponse> manejarHabitacionNoEncontrada(
+    public ResponseEntity<ErrorResponse> manejarHabitacionNoEncontrada(
                 HabitacionNoEncontradaException e) {
+
+        ErrorResponse error = new ErrorResponse(
+                e.getMessage(),
+                HttpStatus.NOT_FOUND.value());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(error);
+        }
+
+    @ExceptionHandler(ReservaNoEncontradaException.class)
+    public ResponseEntity<ErrorResponse> manejarReservaNoEncontrada(
+                ReservaNoEncontradaException e) {
 
         ErrorResponse error = new ErrorResponse(
                 e.getMessage(),

@@ -18,8 +18,6 @@ public class Reserva {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private TipoHabitacion tipoHabitacion;
-
     private LocalDate fechaEntrada;
     private LocalDate fechaSalida;
 
@@ -34,7 +32,6 @@ public class Reserva {
 
     public Reserva (
         Long id,
-        TipoHabitacion tipoHabitacion,
         LocalDate fechaEntrada,
         LocalDate fechaSalida,
         EstadoReserva estadoReserva,
@@ -42,7 +39,6 @@ public class Reserva {
     ) {
 
         this.id = id;
-        this.tipoHabitacion = tipoHabitacion;
         this.fechaEntrada = fechaEntrada;
         this.fechaSalida = fechaSalida;
         this.estadoReserva = estadoReserva;
@@ -88,14 +84,5 @@ public class Reserva {
     public void setHabitacion(Habitacion habitacion) {
         this.habitacion = habitacion;
     }
-
-    public TipoHabitacion getTipoHabitacion() {
-        return tipoHabitacion;
-    }
-
-    public void setTipoHabitacion(TipoHabitacion tipoHabitacion) {
-        this.tipoHabitacion = tipoHabitacion;
-    }
-
 
 }
