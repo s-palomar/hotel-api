@@ -92,4 +92,30 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(error);
     }
+
+    @ExceptionHandler(HabitacionNoDisponibleException.class)
+    public ResponseEntity<ErrorResponse> manejarHabitacionNoDisponible (
+                HabitacionNoDisponibleException  e) {
+
+        ErrorResponse error = new ErrorResponse(
+                e.getMessage(),
+                HttpStatus.CONFLICT.value());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(error);
+    }
+
+    @ExceptionHandler(FechasReservaInvalidasException.class)
+    public ResponseEntity<ErrorResponse> manejarFechasReservaInvalidas(
+                FechasReservaInvalidasException e) {
+
+        ErrorResponse error = new ErrorResponse(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST.value());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(error);
+    }
 }

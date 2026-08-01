@@ -2,18 +2,24 @@ package com.sdover.hotelapi.service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
+import com.sdover.hotelapi.dto.ReservaRequest;
 import com.sdover.hotelapi.dto.ReservaResponse;
+import com.sdover.hotelapi.exception.FechasReservaInvalidasException;
+import com.sdover.hotelapi.exception.HabitacionNoDisponibleException;
 import com.sdover.hotelapi.exception.HabitacionNoEncontradaException;
 import com.sdover.hotelapi.exception.HotelNoEncontradoException;
 import com.sdover.hotelapi.exception.ReservaNoEncontradaException;
 import com.sdover.hotelapi.model.EstadoReserva;
 import com.sdover.hotelapi.model.Habitacion;
-import com.sdover.hotelapi.model.Reserva;
 import com.sdover.hotelapi.model.Hotel;
+import com.sdover.hotelapi.model.Reserva;
 import com.sdover.hotelapi.repository.HabitacionRepository;
 import com.sdover.hotelapi.repository.HotelRepository;
 import com.sdover.hotelapi.repository.ReservaRepository;
 
+@Service
 public class ReservaService {
 
     private final ReservaRepository reservaRepository;
@@ -28,7 +34,66 @@ public class ReservaService {
         this.reservaRepository = reservaRepository;
         this.habitacionRepository = habitacionRepository;
         this.hotelRepository = hotelRepository;
+    }
 
+    public ReservaResponse crearReserva(ReservaRequest request) {
+
+        // Validar fechas
+        if (!request.getFechaSalida().isAfter(request.getFechaEntrada())) {
+
+            throw new FechasReservaInvalidasException(
+                    "La fecha de salida debe ser posterior a la fecha de entrada.");
+        }
+
+        // Buscar hotel
+        Hotel hotel = hotelRepository.findById(request.getHotelId())
+            .orElseThrow(() ->
+                    new HotelNoEncontradoException(
+                            "No existe ningún hotel con id " + request.getHotelId()));
+
+        // Obtener las habitaciones candidatas
+        List<Habitacion> habitaciones = habitacionRepository.findByHotelIdAndTipoHabitacion(
+                    hotel.getId(),
+                    request.getTipoHabitacion());
+
+        // Comprobar que existen habitaciones de ese tipo
+        if (habitaciones.isEmpty()) {
+            throw new HabitacionNoDisponibleException(
+                    "El hotel no dispone de habitaciones del tipo "
+                    + request.getTipoHabitacion());
+        }
+
+        // Recorrerlas
+        for (Habitacion habitacion : habitaciones) {
+
+            boolean ocupada =
+                    reservaRepository.existsOverlappingReservation(
+                            habitacion.getId(),
+                            EstadoReserva.CANCELADA,
+                            request.getFechaEntrada(),
+                            request.getFechaSalida());
+                        
+            // Habitación disponible: crear la reserva
+            if (!ocupada) {
+
+                Reserva reserva = new Reserva();
+
+                reserva.setHabitacion(habitacion);
+                reserva.setFechaEntrada(request.getFechaEntrada());
+                reserva.setFechaSalida(request.getFechaSalida());
+                reserva.setEstadoReserva(EstadoReserva.PENDIENTE);
+
+                Reserva reservaGuardada = reservaRepository.save(reserva);
+
+                return convertirAResponse(reservaGuardada);                
+            }
+        }
+
+        // Si no hay habitaciones libres
+        throw new HabitacionNoDisponibleException(
+            "No hay habitaciones disponibles del tipo "
+            + request.getTipoHabitacion()
+            + " para las fechas solicitadas.");        
     }
 
     public ReservaResponse obtenerReserva(Long id) {
