@@ -28,8 +28,8 @@ Content-Type: application/json
 
 ###
 
-### Crear habitación individual en hotel 1
-POST http://localhost:8080/api/habitaciones/hotel/1
+### Crear habitación individual en hotel 3
+POST http://localhost:8080/api/habitaciones/hotel/3
 Content-Type: application/json
 
 {
@@ -38,8 +38,8 @@ Content-Type: application/json
     "tipoHabitacion": "INDIVIDUAL"
 }
 
-### Crear habitación doble en hotel 1
-POST http://localhost:8080/api/habitaciones/hotel/1
+### Crear habitación doble en hotel 3
+POST http://localhost:8080/api/habitaciones/hotel/3
 Content-Type: application/json
 
 {
@@ -48,8 +48,8 @@ Content-Type: application/json
     "tipoHabitacion": "DOBLE"
 }
 
-### Crear habitación doble en hotel 1
-POST http://localhost:8080/api/habitaciones/hotel/1
+### Crear habitación doble en hotel 3
+POST http://localhost:8080/api/habitaciones/hotel/3
 Content-Type: application/json
 
 {
@@ -58,8 +58,8 @@ Content-Type: application/json
     "tipoHabitacion": "DOBLE"
 }
 
-### Crear suite en hotel 1
-POST http://localhost:8080/api/habitaciones/hotel/1
+### Crear suite en hotel 3
+POST http://localhost:8080/api/habitaciones/hotel/3
 Content-Type: application/json
 
 {
@@ -68,7 +68,7 @@ Content-Type: application/json
     "tipoHabitacion": "SUITE"
 }
 
-### Crear habitación individual en hotel 2
+### Crear habitación individual en hotel 4
 POST http://localhost:8080/api/habitaciones/hotel/2
 Content-Type: application/json
 
@@ -78,7 +78,7 @@ Content-Type: application/json
     "tipoHabitacion": "INDIVIDUAL"
 }
 
-### Crear habitación doble en hotel 2
+### Crear habitación doble en hotel 4
 POST http://localhost:8080/api/habitaciones/hotel/2
 Content-Type: application/json
 

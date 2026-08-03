@@ -13,7 +13,7 @@ POST http://localhost:8080/api/reservas
 Content-Type: application/json
 
 {
-  "hotelId": 1,
+  "hotelId": 3,
   "tipoHabitacion": "DOBLE",
   "fechaEntrada": "2026-08-15",
   "fechaSalida": "2026-08-18"
@@ -26,7 +26,7 @@ POST http://localhost:8080/api/reservas
 Content-Type: application/json
 
 {
-  "hotelId": 1,
+  "hotelId": 3,
   "tipoHabitacion": "DOBLE",
   "fechaEntrada": "2026-08-15",
   "fechaSalida": "2026-08-18"
@@ -39,7 +39,7 @@ POST http://localhost:8080/api/reservas
 Content-Type: application/json
 
 {
-  "hotelId": 1,
+  "hotelId": 3,
   "tipoHabitacion": "DOBLE",
   "fechaEntrada": "2026-08-15",
   "fechaSalida": "2026-08-18"
@@ -56,8 +56,8 @@ GET http://localhost:8080/api/reservas
 
 ###
 
-### Obtener todas las habitaciones del hotel 1
-GET http://localhost:8080/api/habitaciones/hotel/1
+### Obtener todas las habitaciones del hotel 3
+GET http://localhost:8080/api/habitaciones/hotel/3
 
 ### Obtener reserva por id
 GET http://localhost:8080/api/reservas/1
@@ -65,7 +65,7 @@ GET http://localhost:8080/api/reservas/1
 ###
 
 ### Obtener reservas de un hotel
-GET http://localhost:8080/api/reservas/hotel/1
+GET http://localhost:8080/api/reservas/hotel/3
 
 ###
 
@@ -79,7 +79,7 @@ GET http://localhost:8080/api/reservas/habitacion/23
 ###############################################################
 
 ### Cancelar reserva
-DELETE http://localhost:8080/api/reservas/1
+DELETE http://localhost:8080/api/reservas/2
 
 ###
 
@@ -118,7 +118,7 @@ POST http://localhost:8080/api/reservas
 Content-Type: application/json
 
 {
-  "hotelId": 1,
+  "hotelId": 2,
   "tipoHabitacion": "SUITE",
   "fechaEntrada": "2026-08-15",
   "fechaSalida": "2026-08-18"
@@ -131,7 +131,7 @@ POST http://localhost:8080/api/reservas
 Content-Type: application/json
 
 {
-  "hotelId": 1,
+  "hotelId": 2,
   "tipoHabitacion": "DOBLE",
   "fechaEntrada": "2026-08-20",
   "fechaSalida": "2026-08-18"
