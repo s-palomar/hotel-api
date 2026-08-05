@@ -29,6 +29,7 @@ public class ClienteResponse {
             this.dni = dni;
             this.nombre = nombre;
             this.apellidos = apellidos;
+            this.email = email;
             this.telefono = telefono;
             this.nacionalidad = nacionalidad;
             this.formaPago = formaPago;

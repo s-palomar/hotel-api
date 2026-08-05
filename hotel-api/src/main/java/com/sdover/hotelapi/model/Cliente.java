@@ -36,6 +36,8 @@ public class Cliente {
 
     private FormaPago formaPago;
 
+    public Cliente() {}
+
     public Cliente(
         Long id,
         String dni,
@@ -111,13 +113,11 @@ public class Cliente {
         this.nacionalidad = nacionalidad;
     }
 
-    public FormaPago getformaPago() {
+    public FormaPago getFormaPago() {
         return formaPago;
     }
 
-    public void setformaPago(FormaPago formaPago) {
+    public void setFormaPago(FormaPago formaPago) {
         this.formaPago = formaPago;
-    }
-
-        
+    }        
 }

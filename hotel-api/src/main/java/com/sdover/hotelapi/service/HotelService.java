@@ -29,12 +29,7 @@ public class HotelService {
 
         Hotel hotelGuardado = hotelRepository.save(hotel);
         
-        return new HotelResponse(
-            hotelGuardado.getId(),
-            hotelGuardado.getNombre(),
-            hotelGuardado.getCiudad(),
-            hotelGuardado.getCategoria()
-        );
+        return convertirAResponse(hotelGuardado);
     }
 
     public List<HotelResponse> obtenerHoteles() {

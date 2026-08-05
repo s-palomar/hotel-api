@@ -1,0 +1,87 @@
+###############################################################
+### MÓDULO CLIENTES
+### Estado: ✅ Pendiente
+### Última actualización: 05/08/2026
+###############################################################
+
+### Crear cliente 1
+POST http://localhost:8080/api/clientes
+Content-Type: application/json
+
+{
+  "dni": "55555555C",
+  "nombre": "Carlos",
+  "apellidos": "Ruiz",
+  "email": "carlos@email.com",
+  "telefono": "600555666",
+  "nacionalidad": "España",
+  "formaPago": "TARJETA"
+}
+
+###
+
+### Crear cliente 2
+POST http://localhost:8080/api/clientes
+Content-Type: application/json
+
+{
+  "dni": "17654321B",
+  "nombre": "Elena",
+  "apellidos": "Sorolla Fernández",
+  "email": "maria.sorolla@email.com",
+  "telefono": "600332444",
+  "nacionalidad": "España",
+  "formaPago": "EFECTIVO"
+}
+
+###
+
+### Listar todos los clientes
+GET http://localhost:8080/api/clientes
+
+###
+
+### Obtener cliente por id
+GET http://localhost:8080/api/clientes/1
+
+###
+
+### Actualizar cliente
+PUT http://localhost:8080/api/clientes/1
+Content-Type: application/json
+
+{
+  "dni": "12345678A",
+  "nombre": "Juan Carlos",
+  "apellidos": "Pérez García",
+  "email": "juancarlos@email.com",
+  "telefono": "699888777",
+  "nacionalidad": "España",
+  "formaPago": "BIZUM"
+}
+
+###
+
+### Eliminar cliente
+DELETE http://localhost:8080/api/clientes/2
+
+###
+
+### Intentar crear un cliente con DNI duplicado
+POST http://localhost:8080/api/clientes
+Content-Type: application/json
+
+{
+  "dni": "12345678A",
+  "nombre": "Pedro",
+  "apellidos": "Martín",
+  "email": "pedro@email.com",
+  "telefono": "600999888",
+  "nacionalidad": "España",
+  "formaPago": "TRANSFERENCIA"
+}
+
+###
+
+### Buscar un cliente que no existe
+GET http://localhost:8080/api/clientes/999

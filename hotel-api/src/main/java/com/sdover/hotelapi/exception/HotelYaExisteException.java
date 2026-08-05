@@ -6,6 +6,5 @@ public class HotelYaExisteException extends RuntimeException {
 
         super(mensaje); 
     }    
-
 }
 
