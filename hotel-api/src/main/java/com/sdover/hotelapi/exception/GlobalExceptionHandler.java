@@ -144,4 +144,17 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(error);
         }
+
+        @ExceptionHandler(ClienteTieneReservasException.class)
+                public ResponseEntity<ErrorResponse> manejarClienteTieneReservasException(
+                        ClienteTieneReservasException e) {
+
+                ErrorResponse error = new ErrorResponse(
+                        e.getMessage(),
+                        HttpStatus.CONFLICT.value());
+
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(error);
+                }        
 }

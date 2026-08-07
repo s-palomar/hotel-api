@@ -1,10 +1,14 @@
 package com.sdover.hotelapi.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -36,6 +40,9 @@ public class Cliente {
 
     private FormaPago formaPago;
 
+    @OneToMany(mappedBy = "cliente")
+    private List<Reserva> reservas = new ArrayList<>();
+
     public Cliente() {}
 
     public Cliente(
@@ -46,7 +53,8 @@ public class Cliente {
         String email,
         String telefono,
         String nacionalidad,
-        FormaPago formaPago
+        FormaPago formaPago,
+        List<Reserva> reservas
         ) {
             this.id = id;
             this.dni = dni;
@@ -55,6 +63,7 @@ public class Cliente {
             this.telefono = telefono;
             this.nacionalidad = nacionalidad;
             this.formaPago = formaPago;
+            this.reservas = reservas;
     }
 
     public Long getId() {
@@ -120,4 +129,13 @@ public class Cliente {
     public void setFormaPago(FormaPago formaPago) {
         this.formaPago = formaPago;
     }        
+
+    public List<Reserva> getReservas() {
+        return reservas;
+    }
+
+    public void setReservas(List<Reserva> reservas) {
+        this.reservas = reservas;
+    }
+
 }

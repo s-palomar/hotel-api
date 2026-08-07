@@ -20,6 +20,9 @@ public class ReservaRequest {
     @NotNull(message = "La fecha de salida es obligatoria")
     private LocalDate fechaSalida;
 
+    @NotNull(message = "El id de cliente es obligatorio")
+    Long clienteId;
+
     public ReservaRequest() {
     }
 
@@ -27,12 +30,15 @@ public class ReservaRequest {
             Long hotelId,
             TipoHabitacion tipoHabitacion,
             LocalDate fechaEntrada,
-            LocalDate fechaSalida) {
+            LocalDate fechaSalida,
+            Long clienteId
+        ) {
 
         this.hotelId = hotelId;
         this.tipoHabitacion = tipoHabitacion;
         this.fechaEntrada = fechaEntrada;
         this.fechaSalida = fechaSalida;
+        this.clienteId = clienteId;
     }
     
     public Long getHotelId() {
@@ -65,6 +71,14 @@ public class ReservaRequest {
 
     public void setFechaSalida(LocalDate fechaSalida) {
         this.fechaSalida = fechaSalida;
+    }
+
+    public Long getClienteId() {
+        return clienteId;
+    }
+
+    public void setClienteId(Long clienteId) {
+        this.clienteId = clienteId;
     }
     
 }

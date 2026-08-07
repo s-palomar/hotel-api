@@ -19,6 +19,10 @@ public class ReservaResponse {
 
     private EstadoReserva estadoReserva;
 
+    private Long clienteId;
+
+    private String clienteDni;
+
     public ReservaResponse() {
     }
 
@@ -28,7 +32,10 @@ public class ReservaResponse {
             TipoHabitacion tipoHabitacion,
             LocalDate fechaEntrada,
             LocalDate fechaSalida,
-            EstadoReserva estadoReserva) {
+            EstadoReserva estadoReserva,
+            Long clienteId,
+            String clienteDni
+        ) {
 
         this.id = id;
         this.hotelId = hotelId;
@@ -36,6 +43,8 @@ public class ReservaResponse {
         this.fechaEntrada = fechaEntrada;
         this.fechaSalida = fechaSalida;
         this.estadoReserva = estadoReserva;
+        this.clienteId = clienteId;
+        this.clienteDni = clienteDni;
     }
 
     public Long getId() {
@@ -85,5 +94,21 @@ public class ReservaResponse {
     public void setEstadoReserva(EstadoReserva estadoReserva) {
         this.estadoReserva = estadoReserva;
     }
-   
+
+    public Long getClienteId() {
+        return clienteId;
+    }
+
+    public void setClienteId(Long clienteId) {
+        this.clienteId = clienteId;
+    }
+
+    public String getClienteDni() {
+        return clienteDni;
+    }
+
+    public void setClienteDni(String clienteDni) {
+        this.clienteDni = clienteDni;
+    }
+
 }

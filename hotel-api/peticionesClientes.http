@@ -46,24 +46,46 @@ GET http://localhost:8080/api/clientes/1
 
 ###
 
+### Obtener reservas de un cliente
+GET http://localhost:8080/api/clientes/1/reservas
+
+[
+  {
+    "id": 7,
+    "hotelId": 1,
+    "tipoHabitacion": "DOBLE",
+    "fechaEntrada": "2026-09-01",
+    "fechaSalida": "2026-09-05",
+    "estadoReserva": "PENDIENTE",
+    "clienteId": 1,
+    "clienteDni": "12345678A"
+  }
+]
+
+### Cliente existente pero sin reservas
+GET http://localhost:8080/api/clientes/3/reservas
+
+### Cliente inexistente
+GET http://localhost:8080/api/clientes/999/reservas
+
 ### Actualizar cliente
-PUT http://localhost:8080/api/clientes/1
+PUT http://localhost:8080/api/clientes/3
 Content-Type: application/json
 
 {
-  "dni": "12345678A",
-  "nombre": "Juan Carlos",
-  "apellidos": "Pérez García",
-  "email": "juancarlos@email.com",
-  "telefono": "699888777",
+  "dni": "02345678A",
+  "nombre": " Carlos",
+  "apellidos": "García Durán",
+  "email": "carlos@email.com",
+  "telefono": "699558777",
   "nacionalidad": "España",
-  "formaPago": "BIZUM"
+  "formaPago": "EFECTIVO"
 }
 
 ###
 
 ### Eliminar cliente
-DELETE http://localhost:8080/api/clientes/2
+DELETE http://localhost:8080/api/clientes/1
 
 ###
 

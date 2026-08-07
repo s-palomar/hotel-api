@@ -6,15 +6,18 @@ import org.springframework.stereotype.Service;
 
 import com.sdover.hotelapi.dto.ReservaRequest;
 import com.sdover.hotelapi.dto.ReservaResponse;
+import com.sdover.hotelapi.exception.ClienteNoEncontradoException;
 import com.sdover.hotelapi.exception.FechasReservaInvalidasException;
 import com.sdover.hotelapi.exception.HabitacionNoDisponibleException;
 import com.sdover.hotelapi.exception.HabitacionNoEncontradaException;
 import com.sdover.hotelapi.exception.HotelNoEncontradoException;
 import com.sdover.hotelapi.exception.ReservaNoEncontradaException;
+import com.sdover.hotelapi.model.Cliente;
 import com.sdover.hotelapi.model.EstadoReserva;
 import com.sdover.hotelapi.model.Habitacion;
 import com.sdover.hotelapi.model.Hotel;
 import com.sdover.hotelapi.model.Reserva;
+import com.sdover.hotelapi.repository.ClienteRepository;
 import com.sdover.hotelapi.repository.HabitacionRepository;
 import com.sdover.hotelapi.repository.HotelRepository;
 import com.sdover.hotelapi.repository.ReservaRepository;
@@ -25,15 +28,18 @@ public class ReservaService {
     private final ReservaRepository reservaRepository;
     private final HabitacionRepository habitacionRepository;
     private final HotelRepository hotelRepository;
+    private final ClienteRepository clienteRepository;
 
     public ReservaService (
         ReservaRepository reservaRepository,
         HabitacionRepository habitacionRepository,
-        HotelRepository hotelRepository
+        HotelRepository hotelRepository,
+        ClienteRepository clienteRepository
     ) {
         this.reservaRepository = reservaRepository;
         this.habitacionRepository = habitacionRepository;
         this.hotelRepository = hotelRepository;
+        this.clienteRepository = clienteRepository;
     }
 
     public ReservaResponse crearReserva(ReservaRequest request) {
@@ -48,8 +54,15 @@ public class ReservaService {
         // Buscar hotel
         Hotel hotel = hotelRepository.findById(request.getHotelId())
             .orElseThrow(() ->
-                    new HotelNoEncontradoException(
-                            "No existe ningún hotel con id " + request.getHotelId()));
+                new HotelNoEncontradoException(
+                        "No existe ningún hotel con id " + request.getHotelId()));
+
+        // Buscar cliente
+        Cliente cliente = clienteRepository.findById(request.getClienteId())
+            .orElseThrow(() ->
+                new ClienteNoEncontradoException(
+                        "No existe ningún cliente con id " + request.getClienteId()));
+
 
         // Obtener las habitaciones candidatas
         List<Habitacion> habitaciones = habitacionRepository.findByHotelIdAndTipoHabitacion(
@@ -81,6 +94,7 @@ public class ReservaService {
                 reserva.setHabitacion(habitacion);
                 reserva.setFechaEntrada(request.getFechaEntrada());
                 reserva.setFechaSalida(request.getFechaSalida());
+                reserva.setCliente(cliente);
                 reserva.setEstadoReserva(EstadoReserva.PENDIENTE);
 
                 Reserva reservaGuardada = reservaRepository.save(reserva);
@@ -163,7 +177,9 @@ public class ReservaService {
                 reserva.getHabitacion().getTipoHabitacion(),
                 reserva.getFechaEntrada(),
                 reserva.getFechaSalida(),
-                reserva.getEstadoReserva()
+                reserva.getEstadoReserva(),
+                reserva.getCliente().getId(),
+                reserva.getCliente().getDni()
         );
     }
 

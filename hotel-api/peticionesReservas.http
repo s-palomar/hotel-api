@@ -45,7 +45,17 @@ Content-Type: application/json
   "fechaSalida": "2026-08-18"
 }
 
-###
+### Crear reserva vinculada a cliente
+POST http://localhost:8080/api/reservas
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "hotelId": 1,
+  "tipoHabitacion": "DOBLE",
+  "fechaEntrada": "2026-09-01",
+  "fechaSalida": "2026-09-05"
+}
 
 ###############################################################
 ### CONSULTAR RESERVAS

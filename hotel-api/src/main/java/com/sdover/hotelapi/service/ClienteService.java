@@ -6,18 +6,24 @@ import org.springframework.stereotype.Service;
 
 import com.sdover.hotelapi.dto.ClienteRequest;
 import com.sdover.hotelapi.dto.ClienteResponse;
+import com.sdover.hotelapi.dto.ReservaResponse;
 import com.sdover.hotelapi.exception.ClienteNoEncontradoException;
+import com.sdover.hotelapi.exception.ClienteTieneReservasException;
 import com.sdover.hotelapi.exception.ClienteYaExisteException;
 import com.sdover.hotelapi.model.Cliente;
+import com.sdover.hotelapi.model.Reserva;
 import com.sdover.hotelapi.repository.ClienteRepository;
+import com.sdover.hotelapi.repository.ReservaRepository;
 
 @Service
 public class ClienteService {
     
     private final ClienteRepository clienteRepository;
+    private final ReservaRepository reservaRepository;
 
-    public ClienteService(ClienteRepository clienteRepository) {
+    public ClienteService(ClienteRepository clienteRepository, ReservaRepository reservaRepository) {
         this.clienteRepository = clienteRepository;
+        this.reservaRepository = reservaRepository;
     }
 
     // Métodos públicos
@@ -35,6 +41,21 @@ public class ClienteService {
             .orElseThrow(() -> new ClienteNoEncontradoException("No existe cliente con id " + id));
         
         return convertirAResponse(cliente);
+    }
+
+    public List<ReservaResponse> obtenerReservasCliente(Long clienteId) {
+
+        // Comprobar que el cliente existe
+        clienteRepository.findById(clienteId)
+            .orElseThrow(() ->
+                new ClienteNoEncontradoException(
+                    "No existe cliente con id " + clienteId));
+
+        // Obtener las reservas del cliente
+        return reservaRepository.findByClienteId(clienteId)
+                .stream()
+                .map(this::convertirReservaAResponse)
+                .toList();
     }
 
     public ClienteResponse crearCliente(ClienteRequest request) {
@@ -80,7 +101,16 @@ public class ClienteService {
     public void eliminarCliente(Long id) {
 
         Cliente cliente = clienteRepository.findById(id)
-            .orElseThrow(() -> new ClienteNoEncontradoException("No existe cliente con id " + id));
+            .orElseThrow(() ->
+                new ClienteNoEncontradoException(
+                    "No existe cliente con id " + id));
+
+        if (reservaRepository.existsByClienteId(id)) {
+            throw new ClienteTieneReservasException(
+                "No se puede eliminar el cliente con id "
+                + id
+                + " porque tiene reservas asociadas.");
+        }
 
         clienteRepository.delete(cliente);
     }
@@ -97,6 +127,20 @@ public class ClienteService {
             cliente.getTelefono(),
             cliente.getNacionalidad(),
             cliente.getFormaPago()
+        );
+    }
+
+    private ReservaResponse convertirReservaAResponse(Reserva reserva) {
+
+        return new ReservaResponse(
+                reserva.getId(),
+                reserva.getHabitacion().getHotel().getId(),
+                reserva.getHabitacion().getTipoHabitacion(),
+                reserva.getFechaEntrada(),
+                reserva.getFechaSalida(),
+                reserva.getEstadoReserva(),
+                reserva.getCliente().getId(),
+                reserva.getCliente().getDni()
         );
     }
 }

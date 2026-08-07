@@ -16,6 +16,9 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
         List<Reserva> findByHabitacionId(Long habitacionId);
 
+        List<Reserva> findByClienteId(Long clienteId);
+
+        boolean existsByClienteId(Long clienteId);
 
         @Query("""
                 SELECT COUNT(r) > 0

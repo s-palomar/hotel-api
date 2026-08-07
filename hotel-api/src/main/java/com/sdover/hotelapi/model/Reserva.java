@@ -28,6 +28,10 @@ public class Reserva {
     @JoinColumn(name = "habitacion_id")
     private Habitacion habitacion;
 
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
+    private Cliente cliente;
+
     public Reserva () {}
 
     public Reserva (
@@ -35,7 +39,8 @@ public class Reserva {
         LocalDate fechaEntrada,
         LocalDate fechaSalida,
         EstadoReserva estadoReserva,
-        Habitacion habitacion
+        Habitacion habitacion,
+        Cliente cliente
     ) {
 
         this.id = id;
@@ -43,6 +48,7 @@ public class Reserva {
         this.fechaSalida = fechaSalida;
         this.estadoReserva = estadoReserva;
         this.habitacion = habitacion;
+        this.cliente = cliente;
     }
 
     public Long getId() {
@@ -83,6 +89,14 @@ public class Reserva {
 
     public void setHabitacion(Habitacion habitacion) {
         this.habitacion = habitacion;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
 }

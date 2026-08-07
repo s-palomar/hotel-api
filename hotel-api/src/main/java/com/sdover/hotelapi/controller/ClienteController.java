@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sdover.hotelapi.dto.ClienteRequest;
 import com.sdover.hotelapi.dto.ClienteResponse;
+import com.sdover.hotelapi.dto.ReservaResponse;
 import com.sdover.hotelapi.model.Cliente;
 import com.sdover.hotelapi.service.ClienteService;
 
@@ -45,6 +46,16 @@ public class ClienteController {
 
         return clienteService.obtenerCliente(id);
     }
+
+    // GET /api/clientes/{clienteId}/reservas
+    @GetMapping("/{clienteId}/reservas")
+    public List<ReservaResponse> obtenerReservasCliente(
+            @PathVariable Long clienteId) {
+
+        return clienteService.obtenerReservasCliente(clienteId);
+    }
+
+    // GET /api/reservas/cliente/{clienteId}
 
     // POST /api/clientes
     @PostMapping
