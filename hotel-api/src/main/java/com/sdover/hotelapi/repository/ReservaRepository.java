@@ -20,6 +20,8 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
         boolean existsByClienteId(Long clienteId);
 
+        boolean existsByClienteIdAndEstadoReserva(Long clienteId, EstadoReserva estadoReserva);
+
         @Query("""
                 SELECT COUNT(r) > 0
                 FROM Reserva r

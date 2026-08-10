@@ -8,53 +8,16 @@
 ### CREAR RESERVAS
 ###############################################################
 
-### Crear reserva correcta (Hotel 1 - DOBLE)
-POST http://localhost:8080/api/reservas
-Content-Type: application/json
-
-{
-  "hotelId": 3,
-  "tipoHabitacion": "DOBLE",
-  "fechaEntrada": "2026-08-15",
-  "fechaSalida": "2026-08-18"
-}
-
-###
-
-### Crear segunda reserva (debería asignar otra habitación DOBLE)
-POST http://localhost:8080/api/reservas
-Content-Type: application/json
-
-{
-  "hotelId": 3,
-  "tipoHabitacion": "DOBLE",
-  "fechaEntrada": "2026-08-15",
-  "fechaSalida": "2026-08-18"
-}
-
-###
-
-### Crear tercera reserva (si no quedan habitaciones disponibles)
-POST http://localhost:8080/api/reservas
-Content-Type: application/json
-
-{
-  "hotelId": 3,
-  "tipoHabitacion": "DOBLE",
-  "fechaEntrada": "2026-08-15",
-  "fechaSalida": "2026-08-18"
-}
-
 ### Crear reserva vinculada a cliente
 POST http://localhost:8080/api/reservas
 Content-Type: application/json
 
 {
-  "clienteId": 1,
-  "hotelId": 1,
+  "clienteId": 5,
+  "hotelId": 2,
   "tipoHabitacion": "DOBLE",
-  "fechaEntrada": "2026-09-01",
-  "fechaSalida": "2026-09-05"
+  "fechaEntrada": "2026-09-02",
+  "fechaSalida": "2026-09-12"
 }
 
 ###############################################################
@@ -70,12 +33,12 @@ GET http://localhost:8080/api/reservas
 GET http://localhost:8080/api/habitaciones/hotel/3
 
 ### Obtener reserva por id
-GET http://localhost:8080/api/reservas/1
+GET http://localhost:8080/api/reservas/
 
 ###
 
 ### Obtener reservas de un hotel
-GET http://localhost:8080/api/reservas/hotel/3
+GET http://localhost:8080/api/reservas/hotel/1
 
 ###
 
@@ -153,3 +116,65 @@ Content-Type: application/json
 GET http://localhost:8080/api/reservas/999
 
 ###
+
+### Confirmar una reserva PENDIENTE
+PUT http://localhost:8080/api/reservas/11/confirmar
+
+###
+
+### Confirmar una reserva CONFIRMADA
+PUT http://localhost:8080/api/reservas/7/confirmar
+
+###
+
+### Confirmar una reserva CANCELADA
+PUT http://localhost:8080/api/reservas/2/confirmar
+
+###
+
+### Confirmar una reserva INEXISTENTE
+PUT http://localhost:8080/api/reservas/999/confirmar
+
+###
+
+### Cliente con reserva PENDIENTE → cambiar DNI
+PUT http://localhost:8080/api/clientes/5
+Content-Type: application/json
+
+{
+  "dni": "11111111C",
+  "nombre": "Juan",
+  "apellidos": "Pérez García",
+  "email": "juan.perez@email.com",
+  "telefono": "600111222",
+  "nacionalidad": "España",
+  "formaPago": "TARJETA"
+}
+
+### Cliente con reserva CONFIRMADA → cambiar DNI
+PUT http://localhost:8080/api/clientes/5
+Content-Type: application/json
+
+{
+  "dni": "44111111C",
+  "nombre": "Juan",
+  "apellidos": "Pérez García",
+  "email": "juan.perez@email.com",
+  "telefono": "600111222",
+  "nacionalidad": "España",
+  "formaPago": "TARJETA"
+}
+
+### Cliente con reserva CONFIRMADA → cambiar otro dato
+PUT http://localhost:8080/api/clientes/5
+Content-Type: application/json
+
+{
+  "dni": "11111111C",
+  "nombre": "Juan",
+  "apellidos": "Pérez Salmerón",
+  "email": "juan.perez@email.com",
+  "telefono": "600111222",
+  "nacionalidad": "España",
+  "formaPago": "TARJETA"
+}

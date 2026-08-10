@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
                         .body(error);
-                }
+        }
 
         @ExceptionHandler(ReservaNoEncontradaException.class)
         public ResponseEntity<ErrorResponse> manejarReservaNoEncontrada(
@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
                         .body(error);
-                }
+        }
 
         @ExceptionHandler(HotelYaExisteException.class)
         public ResponseEntity<ErrorResponse> manejarHotelYaExiste(HotelYaExisteException e) {
@@ -120,17 +120,17 @@ public class GlobalExceptionHandler {
         }
 
         @ExceptionHandler(ClienteYaExisteException.class)
-                public ResponseEntity<ErrorResponse> manejarClienteYaExiste(
-                        ClienteYaExisteException e) {
+        public ResponseEntity<ErrorResponse> manejarClienteYaExiste(
+                ClienteYaExisteException e) {
 
-                ErrorResponse error = new ErrorResponse(
-                        e.getMessage(),
-                        HttpStatus.CONFLICT.value());
+        ErrorResponse error = new ErrorResponse(
+                e.getMessage(),
+                HttpStatus.CONFLICT.value());
 
-                return ResponseEntity
-                        .status(HttpStatus.CONFLICT)
-                        .body(error);
-                }
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(error);
+        }
 
         @ExceptionHandler(ClienteNoEncontradoException.class)
         public ResponseEntity<ErrorResponse> manejarClienteNoEncontrado(
@@ -146,15 +146,41 @@ public class GlobalExceptionHandler {
         }
 
         @ExceptionHandler(ClienteTieneReservasException.class)
-                public ResponseEntity<ErrorResponse> manejarClienteTieneReservasException(
-                        ClienteTieneReservasException e) {
+        public ResponseEntity<ErrorResponse> manejarClienteTieneReservasException(
+                ClienteTieneReservasException e) {
 
-                ErrorResponse error = new ErrorResponse(
-                        e.getMessage(),
-                        HttpStatus.CONFLICT.value());
+        ErrorResponse error = new ErrorResponse(
+                e.getMessage(),
+                HttpStatus.CONFLICT.value());
 
-                return ResponseEntity
-                        .status(HttpStatus.CONFLICT)
-                        .body(error);
-                }        
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(error);
+        }    
+                
+        @ExceptionHandler(ReservaNoPendienteException.class)
+        public ResponseEntity<ErrorResponse> manejarReservaNoPendienteException(
+                ReservaNoPendienteException e) {
+
+        ErrorResponse error = new ErrorResponse(
+                e.getMessage(),
+                HttpStatus.CONFLICT.value());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(error);
+        }    
+                
+        @ExceptionHandler(ClienteDniBloqueadoException.class)
+        public ResponseEntity<ErrorResponse> manejarClienteDniBloqueadoException(
+                ClienteDniBloqueadoException e) {
+
+        ErrorResponse error = new ErrorResponse(
+                e.getMessage(),
+                HttpStatus.CONFLICT.value());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(error);
+        }    
 }

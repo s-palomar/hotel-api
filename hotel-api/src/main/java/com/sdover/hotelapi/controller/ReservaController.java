@@ -18,6 +18,8 @@ import com.sdover.hotelapi.service.ReservaService;
 import java.util.List;
 
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 @RestController
 @RequestMapping("/api/reservas")
@@ -78,5 +80,12 @@ public class ReservaController {
         reservaService.cancelarReserva(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    // PUT /api/reservas/{id}/confirmar
+    @PutMapping("/{id}/confirmar")
+    public ReservaResponse confirmarReserva(@PathVariable Long id) {
+
+        return reservaService.confirmarReserva(id);
     }
 }

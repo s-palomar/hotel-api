@@ -25,7 +25,7 @@ POST http://localhost:8080/api/clientes
 Content-Type: application/json
 
 {
-  "dni": "17654321B",
+  "dni": "85554321B",
   "nombre": "Elena",
   "apellidos": "Sorolla Fernández",
   "email": "maria.sorolla@email.com",

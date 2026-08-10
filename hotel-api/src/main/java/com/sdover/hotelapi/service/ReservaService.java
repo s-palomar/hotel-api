@@ -12,6 +12,7 @@ import com.sdover.hotelapi.exception.HabitacionNoDisponibleException;
 import com.sdover.hotelapi.exception.HabitacionNoEncontradaException;
 import com.sdover.hotelapi.exception.HotelNoEncontradoException;
 import com.sdover.hotelapi.exception.ReservaNoEncontradaException;
+import com.sdover.hotelapi.exception.ReservaNoPendienteException;
 import com.sdover.hotelapi.model.Cliente;
 import com.sdover.hotelapi.model.EstadoReserva;
 import com.sdover.hotelapi.model.Habitacion;
@@ -166,6 +167,36 @@ public class ReservaService {
         reserva.setEstadoReserva(EstadoReserva.CANCELADA);
 
         reservaRepository.save(reserva);
+    }
+
+    public ReservaResponse confirmarReserva(Long id) {
+
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(() ->
+                        new ReservaNoEncontradaException(
+                                "No existe reserva con id " + id));
+
+        EstadoReserva estado = reserva.getEstadoReserva();
+
+        if (estado == EstadoReserva.CANCELADA) {
+
+            throw new ReservaNoPendienteException(
+                    "La reserva con id " + id
+                    + " no puede confirmarse porque está CANCELADA.");
+        }
+
+        if (estado == EstadoReserva.CONFIRMADA) {
+
+            throw new ReservaNoPendienteException(
+                    "La reserva con id " + id
+                    + " ya está CONFIRMADA.");
+        }
+
+        reserva.setEstadoReserva(EstadoReserva.CONFIRMADA);
+
+        Reserva reservaConfirmada = reservaRepository.save(reserva);
+
+        return convertirAResponse(reservaConfirmada);
     }
 
     // Convertir Reserva -> ReservaResponse

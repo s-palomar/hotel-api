@@ -10,7 +10,9 @@ import com.sdover.hotelapi.dto.ReservaResponse;
 import com.sdover.hotelapi.exception.ClienteNoEncontradoException;
 import com.sdover.hotelapi.exception.ClienteTieneReservasException;
 import com.sdover.hotelapi.exception.ClienteYaExisteException;
+import com.sdover.hotelapi.exception.ClienteDniBloqueadoException;
 import com.sdover.hotelapi.model.Cliente;
+import com.sdover.hotelapi.model.EstadoReserva;
 import com.sdover.hotelapi.model.Reserva;
 import com.sdover.hotelapi.repository.ClienteRepository;
 import com.sdover.hotelapi.repository.ReservaRepository;
@@ -84,6 +86,19 @@ public class ClienteService {
 
         Cliente cliente = clienteRepository.findById(id)
             .orElseThrow(() -> new ClienteNoEncontradoException("No existe cliente con id " + id));
+        
+        // Comprobar si tiene alguna reserva CONFIRMADA
+        if (!cliente.getDni().equals(request.getDni())) {
+
+            boolean tieneReservaConfirmada =
+                            reservaRepository.existsByClienteIdAndEstadoReserva(
+                                id,
+                                EstadoReserva.CONFIRMADA);
+
+                    if (tieneReservaConfirmada) {
+                        throw new ClienteDniBloqueadoException("No se puede modificar DNI porque el cliente con id " + id + " tiene reservas confirmadas.");
+                    }
+        }
 
         cliente.setDni(request.getDni());
         cliente.setNombre(request.getNombre());
