@@ -20,6 +20,24 @@ Content-Type: application/json
   "fechaSalida": "2026-09-12"
 }
 
+### Crear reserva 2
+POST http://localhost:8080/api/reservas
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "hotelId": 1,
+  "tipoHabitacion": "SUITE",
+  "fechaEntrada": "2026-10-02",
+  "fechaSalida": "2026-10-12"
+}
+
+### Reserva PENDIENTE con más de 24 h pero todavía no procesada
+PUT http://localhost:8080/api/reservas/17/confirmar
+
+### Reserva ya CANCELADA
+PUT http://localhost:8080/api/reservas/13/confirmar
+
 ###############################################################
 ### CONSULTAR RESERVAS
 ###############################################################
@@ -111,6 +129,49 @@ Content-Type: application/json
 }
 
 ###
+
+### Incluir fecha de creación de la reserva
+POST http://localhost:8080/api/reservas
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "hotelId": 1,
+  "tipoHabitacion": "SUITE",
+  "fechaEntrada": "2026-10-15",
+  "fechaSalida": "2026-10-18"
+}
+
+### Nueva reserva con fecha de creación 
+POST http://localhost:8080/api/reservas
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "hotelId": 1,
+  "tipoHabitacion": "DOBLE",
+  "fechaEntrada": "2026-09-20",
+  "fechaSalida": "2026-09-23"
+}
+
+
+### Nueva reserva con fecha de creación 
+POST http://localhost:8080/api/reservas
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "hotelId": 1,
+  "tipoHabitacion": "INDIVIDUAL",
+  "fechaEntrada": "2026-09-10",
+  "fechaSalida": "2026-09-13"
+}
+
+### Confirmación normal
+PUT http://localhost:8080/api/reservas/ID/confirmar
+
+### Reserva cancelada no se puede confirmar
+PUT http://localhost:8080/api/reservas/13/confirmar
 
 ### Reserva inexistente
 GET http://localhost:8080/api/reservas/999

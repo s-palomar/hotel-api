@@ -1,6 +1,7 @@
 package com.sdover.hotelapi.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,6 +19,7 @@ public class Reserva {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private LocalDateTime fechaCreacion;
     private LocalDate fechaEntrada;
     private LocalDate fechaSalida;
 
@@ -36,6 +38,7 @@ public class Reserva {
 
     public Reserva (
         Long id,
+        LocalDateTime fechaCreacion,
         LocalDate fechaEntrada,
         LocalDate fechaSalida,
         EstadoReserva estadoReserva,
@@ -44,6 +47,7 @@ public class Reserva {
     ) {
 
         this.id = id;
+        this.fechaCreacion = fechaCreacion;
         this.fechaEntrada = fechaEntrada;
         this.fechaSalida = fechaSalida;
         this.estadoReserva = estadoReserva;
@@ -97,6 +101,14 @@ public class Reserva {
 
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 
 }

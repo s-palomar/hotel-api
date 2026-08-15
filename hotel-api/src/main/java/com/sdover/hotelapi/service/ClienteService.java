@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import com.sdover.hotelapi.dto.ClienteRequest;
 import com.sdover.hotelapi.dto.ClienteResponse;
 import com.sdover.hotelapi.dto.ReservaResponse;
+import com.sdover.hotelapi.exception.ClienteDniBloqueadoException;
 import com.sdover.hotelapi.exception.ClienteNoEncontradoException;
 import com.sdover.hotelapi.exception.ClienteTieneReservasException;
 import com.sdover.hotelapi.exception.ClienteYaExisteException;
-import com.sdover.hotelapi.exception.ClienteDniBloqueadoException;
 import com.sdover.hotelapi.model.Cliente;
 import com.sdover.hotelapi.model.EstadoReserva;
 import com.sdover.hotelapi.model.Reserva;
@@ -151,8 +151,9 @@ public class ClienteService {
                 reserva.getId(),
                 reserva.getHabitacion().getHotel().getId(),
                 reserva.getHabitacion().getTipoHabitacion(),
+                reserva.getFechaCreacion(),
                 reserva.getFechaEntrada(),
-                reserva.getFechaSalida(),
+                reserva.getFechaSalida(),                
                 reserva.getEstadoReserva(),
                 reserva.getCliente().getId(),
                 reserva.getCliente().getDni()

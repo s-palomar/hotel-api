@@ -1,7 +1,9 @@
 package com.sdover.hotelapi.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.sdover.hotelapi.dto.ReservaRequest;
@@ -93,6 +95,7 @@ public class ReservaService {
                 Reserva reserva = new Reserva();
 
                 reserva.setHabitacion(habitacion);
+                reserva.setFechaCreacion(LocalDateTime.now());
                 reserva.setFechaEntrada(request.getFechaEntrada());
                 reserva.setFechaSalida(request.getFechaSalida());
                 reserva.setCliente(cliente);
@@ -199,6 +202,24 @@ public class ReservaService {
         return convertirAResponse(reservaConfirmada);
     }
 
+    @Scheduled(fixedRate = 300000)
+    public void caducarReservasPendientes() {
+
+        LocalDateTime limite =
+                LocalDateTime.now().minusHours(24);
+
+        List<Reserva> reservasCaducadas =
+                reservaRepository.findByEstadoReservaAndFechaCreacionBefore(
+                        EstadoReserva.PENDIENTE,
+                        limite);
+
+        for (Reserva reserva : reservasCaducadas) {
+
+            reserva.setEstadoReserva(EstadoReserva.CANCELADA);
+            reservaRepository.save(reserva);
+        }
+    }
+
     // Convertir Reserva -> ReservaResponse
     private ReservaResponse convertirAResponse(Reserva reserva) {
 
@@ -206,6 +227,7 @@ public class ReservaService {
                 reserva.getId(),
                 reserva.getHabitacion().getHotel().getId(),
                 reserva.getHabitacion().getTipoHabitacion(),
+                reserva.getFechaCreacion(),
                 reserva.getFechaEntrada(),
                 reserva.getFechaSalida(),
                 reserva.getEstadoReserva(),

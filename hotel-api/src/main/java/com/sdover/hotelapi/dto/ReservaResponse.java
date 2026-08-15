@@ -1,7 +1,9 @@
 package com.sdover.hotelapi.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sdover.hotelapi.model.EstadoReserva;
 import com.sdover.hotelapi.model.TipoHabitacion;
 
@@ -12,6 +14,9 @@ public class ReservaResponse {
     private Long hotelId;
 
     private TipoHabitacion tipoHabitacion;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime fechaCreacion;
 
     private LocalDate fechaEntrada;
 
@@ -30,6 +35,7 @@ public class ReservaResponse {
             Long id,
             Long hotelId,
             TipoHabitacion tipoHabitacion,
+            LocalDateTime fechaCreacion,
             LocalDate fechaEntrada,
             LocalDate fechaSalida,
             EstadoReserva estadoReserva,
@@ -40,6 +46,7 @@ public class ReservaResponse {
         this.id = id;
         this.hotelId = hotelId;
         this.tipoHabitacion = tipoHabitacion;
+        this.fechaCreacion = fechaCreacion;
         this.fechaEntrada = fechaEntrada;
         this.fechaSalida = fechaSalida;
         this.estadoReserva = estadoReserva;
@@ -109,6 +116,14 @@ public class ReservaResponse {
 
     public void setClienteDni(String clienteDni) {
         this.clienteDni = clienteDni;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 
 }

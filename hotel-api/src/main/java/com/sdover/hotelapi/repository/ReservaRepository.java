@@ -1,6 +1,7 @@
 package com.sdover.hotelapi.repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,6 +22,8 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
         boolean existsByClienteId(Long clienteId);
 
         boolean existsByClienteIdAndEstadoReserva(Long clienteId, EstadoReserva estadoReserva);
+
+        List<Reserva> findByEstadoReservaAndFechaCreacionBefore(EstadoReserva estadoReserva, LocalDateTime fecha);
 
         @Query("""
                 SELECT COUNT(r) > 0
