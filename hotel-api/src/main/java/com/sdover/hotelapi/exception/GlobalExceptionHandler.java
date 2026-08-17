@@ -197,4 +197,17 @@ public class GlobalExceptionHandler {
                         .status(HttpStatus.BAD_REQUEST)
                         .body(error);
         }  
+
+        @ExceptionHandler(ReservaNoCancelableException.class)
+        public ResponseEntity<ErrorResponse> manejarReservaNoCancelableException(
+                ReservaNoCancelableException e) {
+
+        ErrorResponse error = new ErrorResponse(
+                e.getMessage(),
+                HttpStatus.CONFLICT.value());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(error);
+        }
 }

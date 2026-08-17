@@ -88,4 +88,11 @@ public class ReservaController {
 
         return reservaService.confirmarReserva(id);
     }
+
+    // PUT /api/reservas/{id}/cancelar
+    @PutMapping("/{id}/cancelar")
+    public ReservaResponse cancelarReservaConfirmada(@PathVariable Long id) {
+
+        return reservaService.cancelarReservaConfirmada(id);
+    }
 }

@@ -239,3 +239,60 @@ Content-Type: application/json
   "nacionalidad": "España",
   "formaPago": "TARJETA"
 }
+
+### Crear reserva para prueba de cancelación
+POST http://localhost:8080/api/reservas
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "hotelId": 1,
+  "tipoHabitacion": "DOBLE",
+  "fechaEntrada": "2026-10-15",
+  "fechaSalida": "2026-10-18"
+}
+
+### Confirmar reserva
+PUT http://localhost:8080/api/reservas/19/confirmar
+
+### Cancelar reserva confirmada dentro de plazo (48h antes de fecha de entrada)
+PUT http://localhost:8080/api/reservas/19/cancelar
+
+### Crear reserva - menos de 48h
+POST http://localhost:8080/api/reservas
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "hotelId": 1,
+  "tipoHabitacion": "DOBLE",
+  "fechaEntrada": "2026-08-18",
+  "fechaSalida": "2026-08-20"
+}
+
+### Confirmar reserva
+PUT http://localhost:8080/api/reservas/20/confirmar
+
+### Cancelar reserva fuera de plazo
+PUT http://localhost:8080/api/reservas/20/cancelar
+
+### Crear reserva PENDIENTE
+POST http://localhost:8080/api/reservas
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "hotelId": 1,
+  "tipoHabitacion": "INDIVIDUAL",
+  "fechaEntrada": "2026-09-18",
+  "fechaSalida": "2026-09-20"
+}
+
+### Cancelar reserva PENDIENTE
+PUT http://localhost:8080/api/reservas/21/cancelar
+
+### Cancelar reserva CANCELADA
+PUT http://localhost:8080/api/reservas/19/cancelar
+
+### Cancelar reserva inexistente
+PUT http://localhost:8080/api/reservas/9999/cancelar

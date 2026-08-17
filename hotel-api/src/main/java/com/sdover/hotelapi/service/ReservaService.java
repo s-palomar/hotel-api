@@ -13,6 +13,7 @@ import com.sdover.hotelapi.exception.FechasReservaInvalidasException;
 import com.sdover.hotelapi.exception.HabitacionNoDisponibleException;
 import com.sdover.hotelapi.exception.HabitacionNoEncontradaException;
 import com.sdover.hotelapi.exception.HotelNoEncontradoException;
+import com.sdover.hotelapi.exception.ReservaNoCancelableException;
 import com.sdover.hotelapi.exception.ReservaNoEncontradaException;
 import com.sdover.hotelapi.exception.ReservaNoPendienteException;
 import com.sdover.hotelapi.model.Cliente;
@@ -234,6 +235,36 @@ public class ReservaService {
                 reserva.getCliente().getId(),
                 reserva.getCliente().getDni()
         );
+    }
+
+    public ReservaResponse cancelarReservaConfirmada(Long id) {
+
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(() ->
+                        new ReservaNoEncontradaException(
+                                "No existe reserva con id " + id));
+
+        if (reserva.getEstadoReserva() != EstadoReserva.CONFIRMADA) {
+            throw new ReservaNoCancelableException(
+                    "La reserva con id " + id
+                    + " no puede cancelarse porque no está CONFIRMADA.");
+        }
+
+        LocalDateTime fechaLimite = reserva.getFechaEntrada()
+                .atTime(15, 0)
+                .minusHours(48);
+
+        if (LocalDateTime.now().isAfter(fechaLimite)) {
+            throw new ReservaNoCancelableException(
+                    "La reserva con id " + id
+                    + " no puede cancelarse porque han pasado las 48 horas límite.");
+        }
+
+        reserva.setEstadoReserva(EstadoReserva.CANCELADA);
+
+        reservaRepository.save(reserva);
+
+        return convertirAResponse(reserva);
     }
 
 }
