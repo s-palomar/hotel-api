@@ -1,24 +1,25 @@
 package com.sdover.hotelapi.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sdover.hotelapi.dto.ReservaRequest;
 import com.sdover.hotelapi.dto.ReservaResponse;
+import com.sdover.hotelapi.dto.ReservaUpdateRequest;
 import com.sdover.hotelapi.service.ReservaService;
 
-
-import java.util.List;
-
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PutMapping;
 
 
 @RestController
@@ -94,5 +95,23 @@ public class ReservaController {
     public ReservaResponse cancelarReservaConfirmada(@PathVariable Long id) {
 
         return reservaService.cancelarReservaConfirmada(id);
+    }
+
+    // PATCH /api/reservas/{id}
+    @PatchMapping("/{id}")
+    public ResponseEntity<ReservaResponse> actualizarReserva(
+            @PathVariable Long id,
+            @RequestBody ReservaUpdateRequest request) {
+
+        ReservaResponse reservaActualizada =
+                reservaService.actualizarReserva(id, request);
+
+        return ResponseEntity.ok(reservaActualizada);
+    }
+
+    // Para probar reserva con solapamiento de fechas
+    @GetMapping("/probar-disponibilidad")
+    public void probarDisponibilidad() {
+        reservaService.probarDisponibilidad();
     }
 }

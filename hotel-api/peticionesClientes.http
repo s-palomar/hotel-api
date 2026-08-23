@@ -20,7 +20,7 @@ Content-Type: application/json
 
 ###
 
-### Crear cliente 2
+### Crear cliente 6
 POST http://localhost:8080/api/clientes
 Content-Type: application/json
 
@@ -32,6 +32,54 @@ Content-Type: application/json
   "telefono": "600332444",
   "nacionalidad": "España",
   "formaPago": "EFECTIVO"
+}
+
+###
+
+### Crear cliente 7
+POST http://localhost:8080/api/clientes
+Content-Type: application/json
+
+{
+  "dni": "20554321B",
+  "nombre": "Luis",
+  "apellidos": "Pía Fernández",
+  "email": "l.pia@email.com",
+  "telefono": "666332444",
+  "nacionalidad": "España",
+  "formaPago": "TARJETA"
+}
+
+###
+
+### Crear cliente 8
+POST http://localhost:8080/api/clientes
+Content-Type: application/json
+
+{
+  "dni": "11154321B",
+  "nombre": "Susana",
+  "apellidos": "Abad Martín",
+  "email": "abad@email.com",
+  "telefono": "63852444",
+  "nacionalidad": "España",
+  "formaPago": "EFECTIVO"
+}
+
+###
+
+### Crear cliente 9
+POST http://localhost:8080/api/clientes
+Content-Type: application/json
+
+{
+  "dni": "44454321B",
+  "nombre": "Mike",
+  "apellidos": "Lago",
+  "email": "m.lago@email.com",
+  "telefono": "699332444",
+  "nacionalidad": "España",
+  "formaPago": "BIZUM"
 }
 
 ###

@@ -16,8 +16,8 @@ Content-Type: application/json
   "clienteId": 5,
   "hotelId": 2,
   "tipoHabitacion": "DOBLE",
-  "fechaEntrada": "2026-09-02",
-  "fechaSalida": "2026-09-12"
+  "fechaEntrada": "2026-11-02",
+  "fechaSalida": "2026-11-12"
 }
 
 ### Crear reserva 2
@@ -32,8 +32,58 @@ Content-Type: application/json
   "fechaSalida": "2026-10-12"
 }
 
-### Reserva PENDIENTE con más de 24 h pero todavía no procesada
-PUT http://localhost:8080/api/reservas/17/confirmar
+### Crear reserva hotel 2
+POST http://localhost:8080/api/reservas
+Content-Type: application/json
+
+{
+  "clienteId": 6,
+  "hotelId": 2,
+  "tipoHabitacion": "DOBLE",
+  "fechaEntrada": "2026-08-23",
+  "fechaSalida": "2026-08-31"
+}
+
+### Comprobar que no muestra disponibilidad cuando todas las habitaciones están ocupadas esa fecha
+
+### Crear reserva hotel 2
+POST http://localhost:8080/api/reservas
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "hotelId": 2,
+  "tipoHabitacion": "DOBLE",
+  "fechaEntrada": "2026-10-02",
+  "fechaSalida": "2026-10-10"
+}
+
+### Crear reserva hotel 2
+POST http://localhost:8080/api/reservas
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "hotelId": 2,
+  "tipoHabitacion": "DOBLE",
+  "fechaEntrada": "2026-10-02",
+  "fechaSalida": "2026-10-07"
+}
+
+### Crear reserva hotel 2
+POST http://localhost:8080/api/reservas
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "hotelId": 2,
+  "tipoHabitacion": "DOBLE",
+  "fechaEntrada": "2026-10-03",
+  "fechaSalida": "2026-10-11"
+}
+
+### Confirmar reserva PENDIENTE 
+PUT http://localhost:8080/api/reservas/27/confirmar
 
 ### Reserva ya CANCELADA
 PUT http://localhost:8080/api/reservas/13/confirmar
@@ -47,11 +97,11 @@ GET http://localhost:8080/api/reservas
 
 ###
 
-### Obtener todas las habitaciones del hotel 3
-GET http://localhost:8080/api/habitaciones/hotel/3
+### Obtener todas las habitaciones del hotel 1
+GET http://localhost:8080/api/habitaciones/hotel/1
 
-### Obtener reserva por id
-GET http://localhost:8080/api/reservas/
+### Obtener reserva por id reserva
+GET http://localhost:8080/api/reservas/20
 
 ###
 
@@ -61,7 +111,12 @@ GET http://localhost:8080/api/reservas/hotel/1
 ###
 
 ### Obtener reservas de una habitación
-GET http://localhost:8080/api/reservas/habitacion/23
+GET http://localhost:8080/api/reservas/habitacion/24
+
+###
+
+### Ver disponibilidad reserva por fecha, hotel y tipo de habitación
+GET http://localhost:8080/api/reservas/probar-disponibilidad
 
 ###
 
@@ -153,7 +208,6 @@ Content-Type: application/json
   "fechaEntrada": "2026-09-20",
   "fechaSalida": "2026-09-23"
 }
-
 
 ### Nueva reserva con fecha de creación 
 POST http://localhost:8080/api/reservas
@@ -296,3 +350,101 @@ PUT http://localhost:8080/api/reservas/19/cancelar
 
 ### Cancelar reserva inexistente
 PUT http://localhost:8080/api/reservas/9999/cancelar
+
+
+### Actualizar fechas reserva pendiente
+PATCH http://localhost:8080/api/reservas/26
+Content-Type: application/json
+
+{
+  "fechaEntrada": "2026-09-10",
+  "fechaSalida": "2026-09-15"
+}
+
+### Actualizar tipo habitación reserva pendiente
+PATCH http://localhost:8080/api/reservas/26
+Content-Type: application/json
+
+{
+  "tipoHabitacion": "INDIVIDUAL"
+}
+
+### Actualizar cliente reserva pendiente
+PATCH http://localhost:8080/api/reservas/26
+Content-Type: application/json
+
+{
+  "clienteId": 7
+}
+
+### Actualizar tipo habitación reserva confirmada
+PATCH http://localhost:8080/api/reservas/17
+Content-Type: application/json
+
+{
+  "tipoHabitacion": "DOBLE"
+}
+
+### Actualizar fechas reserva confirmada >48h
+PATCH http://localhost:8080/api/reservas/27
+Content-Type: application/json
+
+{
+  "fechaEntrada": "2026-10-10",
+  "fechaSalida": "2026-10-15"
+}
+
+### Actualizar fechas reserva confirmada <48h
+PATCH http://localhost:8080/api/reservas/ID
+Content-Type: application/json
+
+{
+  "fechaEntrada": "2026-08-23",
+  "fechaSalida": "2026-08-25"
+}
+
+### Actualizar hotel reserva confirmada <48h
+PATCH http://localhost:8080/api/reservas/17
+Content-Type: application/json
+
+{
+  "hotelId": 2
+}
+
+### Actualizar cliente reserva confirmada
+PATCH http://localhost:8080/api/reservas/17
+Content-Type: application/json
+
+{
+  "clienteId": 3
+}
+
+### Actualizar reserva cancelada
+PATCH http://localhost:8080/api/reservas/21
+Content-Type: application/json
+
+{
+  "clienteId": 3
+}
+
+### Error validación: Request vacío
+PATCH http://localhost:8080/api/reservas/17
+Content-Type: application/json
+
+{}
+
+### Error validación: Sólo 1 fecha
+PATCH http://localhost:8080/api/reservas/17
+Content-Type: application/json
+
+{
+  "fechaEntrada": "2026-09-10"
+}
+
+### Error validación: cliente inexistente
+PATCH http://localhost:8080/api/reservas/17
+Content-Type: application/json
+
+{
+  "clienteId": 9999
+}

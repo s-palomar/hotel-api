@@ -210,4 +210,43 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.CONFLICT)
                 .body(error);
         }
+
+        @ExceptionHandler(ReservaUpdateVaciaException.class)
+        public ResponseEntity<ErrorResponse> manejarReservaUpdateVaciaException(
+                ReservaUpdateVaciaException e) {
+
+                ErrorResponse error = new ErrorResponse(
+                        "Solicitud vacía, no válida.",
+                        HttpStatus.BAD_REQUEST.value());
+
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(error);
+        }  
+
+        @ExceptionHandler(FechasReservaIncompletasException.class)
+        public ResponseEntity<ErrorResponse> manejarFechasReservaIncompletasException(
+                FechasReservaIncompletasException e) {
+
+                ErrorResponse error = new ErrorResponse(
+                        "Para modificar fechas se debe incluir tanto la de entrada como la de salida.",
+                        HttpStatus.BAD_REQUEST.value());
+
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(error);
+        }
+        
+        @ExceptionHandler(ReservaNoModificableException.class)
+        public ResponseEntity<ErrorResponse> manejarReservaNoModificableException(
+                ReservaNoModificableException e) {
+
+                ErrorResponse error = new ErrorResponse(
+                        e.getMessage(),
+                        HttpStatus.CONFLICT.value());
+
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(error);
+        }
 }

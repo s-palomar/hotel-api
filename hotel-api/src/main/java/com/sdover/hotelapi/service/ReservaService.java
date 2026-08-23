@@ -1,26 +1,33 @@
 package com.sdover.hotelapi.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.sdover.hotelapi.HotelApiApplication;
 import com.sdover.hotelapi.dto.ReservaRequest;
 import com.sdover.hotelapi.dto.ReservaResponse;
+import com.sdover.hotelapi.dto.ReservaUpdateRequest;
 import com.sdover.hotelapi.exception.ClienteNoEncontradoException;
+import com.sdover.hotelapi.exception.FechasReservaIncompletasException;
 import com.sdover.hotelapi.exception.FechasReservaInvalidasException;
 import com.sdover.hotelapi.exception.HabitacionNoDisponibleException;
 import com.sdover.hotelapi.exception.HabitacionNoEncontradaException;
 import com.sdover.hotelapi.exception.HotelNoEncontradoException;
 import com.sdover.hotelapi.exception.ReservaNoCancelableException;
 import com.sdover.hotelapi.exception.ReservaNoEncontradaException;
+import com.sdover.hotelapi.exception.ReservaNoModificableException;
 import com.sdover.hotelapi.exception.ReservaNoPendienteException;
+import com.sdover.hotelapi.exception.ReservaUpdateVaciaException;
 import com.sdover.hotelapi.model.Cliente;
 import com.sdover.hotelapi.model.EstadoReserva;
 import com.sdover.hotelapi.model.Habitacion;
 import com.sdover.hotelapi.model.Hotel;
 import com.sdover.hotelapi.model.Reserva;
+import com.sdover.hotelapi.model.TipoHabitacion;
 import com.sdover.hotelapi.repository.ClienteRepository;
 import com.sdover.hotelapi.repository.HabitacionRepository;
 import com.sdover.hotelapi.repository.HotelRepository;
@@ -29,6 +36,8 @@ import com.sdover.hotelapi.repository.ReservaRepository;
 @Service
 public class ReservaService {
 
+    private final ClienteService clienteService;
+    private final HotelApiApplication hotelApiApplication;
     private final ReservaRepository reservaRepository;
     private final HabitacionRepository habitacionRepository;
     private final HotelRepository hotelRepository;
@@ -38,12 +47,14 @@ public class ReservaService {
         ReservaRepository reservaRepository,
         HabitacionRepository habitacionRepository,
         HotelRepository hotelRepository,
-        ClienteRepository clienteRepository
+        ClienteRepository clienteRepository, HotelApiApplication hotelApiApplication, ClienteService clienteService
     ) {
         this.reservaRepository = reservaRepository;
         this.habitacionRepository = habitacionRepository;
         this.hotelRepository = hotelRepository;
         this.clienteRepository = clienteRepository;
+        this.hotelApiApplication = hotelApiApplication;
+        this.clienteService = clienteService;
     }
 
     public ReservaResponse crearReserva(ReservaRequest request) {
@@ -265,6 +276,206 @@ public class ReservaService {
         reservaRepository.save(reserva);
 
         return convertirAResponse(reserva);
+    }
+
+    public ReservaResponse actualizarReserva(Long id, ReservaUpdateRequest request) {
+
+        Reserva reserva = reservaRepository.findById(id)
+            .orElseThrow(() ->
+                    new ReservaNoEncontradaException(
+                            "No existe reserva con id " + id));
+
+        if (reserva.getEstadoReserva() == EstadoReserva.CANCELADA) {
+            throw new ReservaNoModificableException(
+                    "La reserva con id " + id
+                    + " no puede modificarse porque está CANCELADA.");
+        }
+
+        if (request.getHotelId() == null
+                && request.getTipoHabitacion() == null
+                && request.getFechaEntrada() == null
+                && request.getFechaSalida() == null
+                && request.getClienteId() == null) {
+
+            throw new ReservaUpdateVaciaException(
+                    "No se ha indicado ningún dato para modificar la reserva.");
+        }
+
+        if ((request.getFechaEntrada() == null
+                && request.getFechaSalida() != null)
+                || (request.getFechaEntrada() != null
+                && request.getFechaSalida() == null)) {
+
+            throw new FechasReservaIncompletasException(
+                    "Para modificar las fechas de una reserva deben indicarse "
+                    + "la fecha de entrada y la fecha de salida.");
+        }
+
+        if (reserva.getEstadoReserva() == EstadoReserva.PENDIENTE) {
+
+            boolean cambiaHabitacion = request.getHotelId() != null
+                    || request.getTipoHabitacion() != null
+                    || request.getFechaEntrada() != null
+                    || request.getFechaSalida() != null;
+
+            if (cambiaHabitacion) {
+
+                Long hotelIdFinal = request.getHotelId() != null
+                        ? request.getHotelId()
+                        : reserva.getHabitacion().getHotel().getId();
+
+                TipoHabitacion tipoHabitacionFinal = request.getTipoHabitacion() != null
+                        ? request.getTipoHabitacion()
+                        : reserva.getHabitacion().getTipoHabitacion();
+
+                LocalDate fechaEntradaFinal = request.getFechaEntrada() != null
+                        ? request.getFechaEntrada()
+                        : reserva.getFechaEntrada();
+
+                LocalDate fechaSalidaFinal = request.getFechaSalida() != null
+                        ? request.getFechaSalida()
+                        : reserva.getFechaSalida();
+
+                Habitacion habitacionFinal = buscarHabitacionDisponible(
+                        hotelIdFinal,
+                        tipoHabitacionFinal,
+                        fechaEntradaFinal,
+                        fechaSalidaFinal,
+                        reserva.getId()
+                );
+
+                reserva.setHabitacion(habitacionFinal);
+                reserva.setFechaEntrada(fechaEntradaFinal);
+                reserva.setFechaSalida(fechaSalidaFinal);
+            } 
+            
+            if (request.getClienteId() != null) {
+
+                Cliente clienteFinal = clienteRepository.findById(request.getClienteId())
+                        .orElseThrow(() ->
+                                new ClienteNoEncontradoException(
+                                        "No existe cliente con id " + request.getClienteId()));
+
+                reserva.setCliente(clienteFinal);
+            }
+           
+            reservaRepository.save(reserva);
+
+            return convertirAResponse(reserva);
+
+        } else if (reserva.getEstadoReserva() == EstadoReserva.CONFIRMADA) {
+
+            boolean cambiaHabitacion = request.getHotelId() != null
+                    || request.getTipoHabitacion() != null
+                    || request.getFechaEntrada() != null
+                    || request.getFechaSalida() != null;
+
+            // Comprobar regla de 48 h para cambios de fechas u hotel
+            if (cambiaHabitacion) {
+
+                // Asignar valores finales
+                Long hotelIdFinal = request.getHotelId() != null
+                        ? request.getHotelId()
+                        : reserva.getHabitacion().getHotel().getId();
+
+                TipoHabitacion tipoHabitacionFinal = request.getTipoHabitacion() != null
+                        ? request.getTipoHabitacion()
+                        : reserva.getHabitacion().getTipoHabitacion();
+
+                LocalDate fechaEntradaFinal = request.getFechaEntrada() != null
+                        ? request.getFechaEntrada()
+                        : reserva.getFechaEntrada();
+
+                LocalDate fechaSalidaFinal = request.getFechaSalida() != null
+                        ? request.getFechaSalida()
+                        : reserva.getFechaSalida();
+
+                if (request.getHotelId() != null
+                        || request.getFechaEntrada() != null
+                        || request.getFechaSalida() != null) {
+
+                    LocalDateTime fechaLimite = reserva.getFechaEntrada()
+                            .atTime(15, 0)
+                            .minusHours(48);
+
+                    if (LocalDateTime.now().isAfter(fechaLimite)) {
+                        throw new ReservaNoModificableException(
+                                "La reserva con id " + id
+                                + " no puede modificarse porque faltan menos de 48 horas "
+                                + "para la fecha de entrada.");
+                    }
+                }
+
+                // Buscar habitación
+                Habitacion habitacionFinal = buscarHabitacionDisponible(
+                        hotelIdFinal,
+                        tipoHabitacionFinal,
+                        fechaEntradaFinal,
+                        fechaSalidaFinal,
+                        reserva.getId()
+                );
+
+                // Asignar los nuevos valores a la reserva
+                reserva.setHabitacion(habitacionFinal);
+                reserva.setFechaEntrada(fechaEntradaFinal);
+                reserva.setFechaSalida(fechaSalidaFinal);
+            }
+            
+            if (request.getClienteId() != null) {
+
+                Cliente clienteFinal = clienteRepository.findById(request.getClienteId())
+                        .orElseThrow(() ->
+                                new ClienteNoEncontradoException(
+                                        "No existe cliente con id " + request.getClienteId()));
+                                    
+                reserva.setCliente(clienteFinal);
+            }
+
+            reservaRepository.save(reserva);
+
+            return convertirAResponse(reserva);
+        } else {
+
+            throw new ReservaNoModificableException("La reserva con id " + id
+            + " no puede modificarse en su estado actual.");
+        }        
+    }
+
+    private Habitacion buscarHabitacionDisponible(
+            Long hotelId,
+            TipoHabitacion tipoHabitacion,
+            LocalDate fechaEntrada,
+            LocalDate fechaSalida,
+            Long reservaId) {
+
+        List<Habitacion> habitacionesDisponibles =
+                habitacionRepository.buscarHabitacionDisponible(
+                        hotelId,
+                        tipoHabitacion,
+                        fechaEntrada,
+                        fechaSalida,
+                        reservaId);
+
+        if (habitacionesDisponibles.isEmpty()) {
+            throw new ReservaNoModificableException(
+                    "No hay habitaciones disponibles para las condiciones solicitadas.");
+        }
+
+        return habitacionesDisponibles.get(0);
+    }
+
+    public void probarDisponibilidad() {
+
+        List<Habitacion> habitacionesDisponibles =
+        habitacionRepository.buscarHabitacionDisponible(
+                2L,
+                TipoHabitacion.DOBLE,
+                LocalDate.of(2026, 9, 2),
+                LocalDate.of(2026, 9, 10),
+                20L
+        );
+
+        System.out.println("Habitaciones disponibles: " + habitacionesDisponibles);
     }
 
 }
