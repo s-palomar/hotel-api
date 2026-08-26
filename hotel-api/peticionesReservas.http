@@ -16,8 +16,8 @@ Content-Type: application/json
   "clienteId": 5,
   "hotelId": 2,
   "tipoHabitacion": "DOBLE",
-  "fechaEntrada": "2026-11-02",
-  "fechaSalida": "2026-11-12"
+  "fechaEntrada": "2026-10-02",
+  "fechaSalida": "2026-10-12"
 }
 
 ### Crear reserva 2
@@ -82,6 +82,18 @@ Content-Type: application/json
   "fechaSalida": "2026-10-11"
 }
 
+### Crear reserva con precio final
+POST http://localhost:8080/api/reservas
+Content-Type: application/json
+
+{
+  "clienteId": 5,
+  "hotelId": 2,
+  "tipoHabitacion": "SUITE",
+  "fechaEntrada": "2026-11-10",
+  "fechaSalida": "2026-11-20"
+}
+
 ### Confirmar reserva PENDIENTE 
 PUT http://localhost:8080/api/reservas/27/confirmar
 
@@ -106,7 +118,7 @@ GET http://localhost:8080/api/reservas/20
 ###
 
 ### Obtener reservas de un hotel
-GET http://localhost:8080/api/reservas/hotel/1
+GET http://localhost:8080/api/reservas/hotel/2
 
 ###
 
@@ -114,6 +126,9 @@ GET http://localhost:8080/api/reservas/hotel/1
 GET http://localhost:8080/api/reservas/habitacion/24
 
 ###
+
+### Obtener reserva con precio total
+GET http://localhost:8080/api/reservas/29
 
 ### Ver disponibilidad reserva por fecha, hotel y tipo de habitación
 GET http://localhost:8080/api/reservas/probar-disponibilidad

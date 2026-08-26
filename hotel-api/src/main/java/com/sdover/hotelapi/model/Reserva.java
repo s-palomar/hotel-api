@@ -22,6 +22,7 @@ public class Reserva {
     private LocalDateTime fechaCreacion;
     private LocalDate fechaEntrada;
     private LocalDate fechaSalida;
+    private Double precioTotal;
 
     @Enumerated(EnumType.STRING)
     private EstadoReserva estadoReserva;
@@ -41,6 +42,7 @@ public class Reserva {
         LocalDateTime fechaCreacion,
         LocalDate fechaEntrada,
         LocalDate fechaSalida,
+        Double precioTotal,
         EstadoReserva estadoReserva,
         Habitacion habitacion,
         Cliente cliente
@@ -50,6 +52,7 @@ public class Reserva {
         this.fechaCreacion = fechaCreacion;
         this.fechaEntrada = fechaEntrada;
         this.fechaSalida = fechaSalida;
+        this.precioTotal = precioTotal;
         this.estadoReserva = estadoReserva;
         this.habitacion = habitacion;
         this.cliente = cliente;
@@ -109,6 +112,14 @@ public class Reserva {
 
     public void setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public Double getPrecioTotal() {
+        return precioTotal;
+    }
+
+    public void setPrecioTotal(Double precioTotal) {
+        this.precioTotal = precioTotal;
     }
 
 }

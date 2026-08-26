@@ -16,6 +16,8 @@ public interface HabitacionRepository extends JpaRepository<Habitacion, Long> {
         Long hotelId,
         TipoHabitacion tipoHabitacion);
 
+    boolean existsByHotelIdAndNumero(Long hotelId, String numero);
+
     @Query("""
         SELECT h
         FROM Habitacion h

@@ -88,6 +88,16 @@ Content-Type: application/json
     "tipoHabitacion": "INDIVIDUAL"
 }
 
+### Crear suite con precio base
+POST http://localhost:8080/api/habitaciones/hotel/2
+Content-Type: application/json
+
+{
+    "numero": "202",
+    "precioBase": 180.0,
+    "tipoHabitacion": "SUITE"
+}
+
 ### =========================
 ### CONSULTAS GET
 ### =========================

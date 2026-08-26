@@ -2,6 +2,7 @@ package com.sdover.hotelapi.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.scheduling.annotation.Scheduled;
@@ -105,11 +106,15 @@ public class ReservaService {
             if (!ocupada) {
 
                 Reserva reserva = new Reserva();
+                LocalDate fechaEntrada = request.getFechaEntrada();
+                LocalDate fechaSalida = request.getFechaSalida();
+                Double precioTotal = calcularPrecioTotal(habitacion, fechaEntrada, fechaSalida);
 
                 reserva.setHabitacion(habitacion);
                 reserva.setFechaCreacion(LocalDateTime.now());
-                reserva.setFechaEntrada(request.getFechaEntrada());
-                reserva.setFechaSalida(request.getFechaSalida());
+                reserva.setFechaEntrada(fechaEntrada);
+                reserva.setFechaSalida(fechaSalida);
+                reserva.setPrecioTotal(precioTotal);
                 reserva.setCliente(cliente);
                 reserva.setEstadoReserva(EstadoReserva.PENDIENTE);
 
@@ -244,7 +249,8 @@ public class ReservaService {
                 reserva.getFechaSalida(),
                 reserva.getEstadoReserva(),
                 reserva.getCliente().getId(),
-                reserva.getCliente().getDni()
+                reserva.getCliente().getDni(),
+                reserva.getPrecioTotal()
         );
     }
 
@@ -341,12 +347,14 @@ public class ReservaService {
                         tipoHabitacionFinal,
                         fechaEntradaFinal,
                         fechaSalidaFinal,
-                        reserva.getId()
-                );
+                        reserva.getId());
+                
+                Double precioFinal = calcularPrecioTotal(habitacionFinal, fechaEntradaFinal, fechaSalidaFinal);
 
                 reserva.setHabitacion(habitacionFinal);
                 reserva.setFechaEntrada(fechaEntradaFinal);
                 reserva.setFechaSalida(fechaSalidaFinal);
+                reserva.setPrecioTotal(precioFinal);
             } 
             
             if (request.getClienteId() != null) {
@@ -415,10 +423,13 @@ public class ReservaService {
                         reserva.getId()
                 );
 
+                Double precioFinal = calcularPrecioTotal(habitacionFinal, fechaEntradaFinal, fechaSalidaFinal);
+
                 // Asignar los nuevos valores a la reserva
                 reserva.setHabitacion(habitacionFinal);
                 reserva.setFechaEntrada(fechaEntradaFinal);
                 reserva.setFechaSalida(fechaSalidaFinal);
+                reserva.setPrecioTotal(precioFinal);
             }
             
             if (request.getClienteId() != null) {
@@ -462,6 +473,18 @@ public class ReservaService {
         }
 
         return habitacionesDisponibles.get(0);
+    }
+
+    private Double calcularPrecioTotal(
+                Habitacion habitacion,
+                LocalDate fechaEntrada,
+                LocalDate fechaSalida) {
+
+        long noches = ChronoUnit.DAYS.between(fechaEntrada, fechaSalida);
+
+        Double precioTotal = noches * habitacion.getPrecioBase();
+
+        return precioTotal;
     }
 
     public void probarDisponibilidad() {

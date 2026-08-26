@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.sdover.hotelapi.dto.HabitacionRequest;
 import com.sdover.hotelapi.dto.HabitacionResponse;
 import com.sdover.hotelapi.exception.HabitacionNoEncontradaException;
+import com.sdover.hotelapi.exception.HabitacionYaExisteException;
 import com.sdover.hotelapi.exception.HotelNoEncontradoException;
 import com.sdover.hotelapi.model.Habitacion;
 import com.sdover.hotelapi.model.Hotel;
@@ -29,14 +30,23 @@ public class HabitacionService {
 
     public HabitacionResponse crearHabitacion(Long hotelId, HabitacionRequest request) {
 
+        Hotel hotel = hotelRepository.findById(hotelId)
+            .orElseThrow(() -> new HotelNoEncontradoException("No existe ningún hotel con id " + hotelId));
+
+        if (habitacionRepository.existsByHotelIdAndNumero(
+                hotelId, request.getNumero())) {
+
+            throw new HabitacionYaExisteException(
+                    "Ya existe una habitación con número "
+                    + request.getNumero()
+                    + " en el hotel con id "
+                    + hotelId);
+        }
+        
         Habitacion habitacion = new Habitacion();
         habitacion.setTipoHabitacion(request.getTipoHabitacion());
         habitacion.setNumero(request.getNumero());
         habitacion.setPrecioBase(request.getPrecioBase());
-
-        Hotel hotel = hotelRepository.findById(hotelId)
-            .orElseThrow(() -> new HotelNoEncontradoException("No existe ningún hotel con id " + hotelId));
-
         habitacion.setHotel(hotel);
         
         Habitacion habitacionGuardada = habitacionRepository.save(habitacion);

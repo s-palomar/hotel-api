@@ -28,6 +28,8 @@ public class ReservaResponse {
 
     private String clienteDni;
 
+    private Double precioTotal;
+
     public ReservaResponse() {
     }
 
@@ -40,7 +42,8 @@ public class ReservaResponse {
             LocalDate fechaSalida,
             EstadoReserva estadoReserva,
             Long clienteId,
-            String clienteDni
+            String clienteDni,
+            Double precioTotal
         ) {
 
         this.id = id;
@@ -52,6 +55,7 @@ public class ReservaResponse {
         this.estadoReserva = estadoReserva;
         this.clienteId = clienteId;
         this.clienteDni = clienteDni;
+        this.precioTotal = precioTotal;
     }
 
     public Long getId() {
@@ -124,6 +128,14 @@ public class ReservaResponse {
 
     public void setFechaCreacion(LocalDateTime fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public Double getPrecioTotal() {
+        return precioTotal;
+    }
+
+    public void setPrecioTotal(Double precioTotal) {
+        this.precioTotal = precioTotal;
     }
 
 }

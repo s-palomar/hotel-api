@@ -156,7 +156,8 @@ public class ClienteService {
                 reserva.getFechaSalida(),                
                 reserva.getEstadoReserva(),
                 reserva.getCliente().getId(),
-                reserva.getCliente().getDni()
+                reserva.getCliente().getDni(),
+                reserva.getPrecioTotal()
         );
     }
 }

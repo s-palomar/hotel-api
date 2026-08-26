@@ -249,4 +249,17 @@ public class GlobalExceptionHandler {
                         .status(HttpStatus.CONFLICT)
                         .body(error);
         }
+
+        @ExceptionHandler(HabitacionYaExisteException.class)
+        public ResponseEntity<ErrorResponse> manejarHabitacionYaExisteException(
+                HabitacionYaExisteException e) {
+
+        ErrorResponse error = new ErrorResponse(
+                e.getMessage(),
+                HttpStatus.CONFLICT.value());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(error);
+        }
 }
