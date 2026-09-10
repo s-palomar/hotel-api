@@ -28,6 +28,18 @@ Content-Type: application/json
 
 ###
 
+### Crear hotel en Madrid
+POST http://localhost:8080/api/hoteles
+Content-Type: application/json
+
+{
+  "nombre": "Ritz",
+  "ciudad": "Madrid",
+  "categoria": 5
+}
+
+###
+
 ### Crear habitación individual en hotel 3
 POST http://localhost:8080/api/habitaciones/hotel/3
 Content-Type: application/json
@@ -79,7 +91,7 @@ Content-Type: application/json
 }
 
 ### Crear habitación doble en hotel 4
-POST http://localhost:8080/api/habitaciones/hotel/2
+POST http://localhost:8080/api/habitaciones/hotel/4
 Content-Type: application/json
 
 {
@@ -98,6 +110,41 @@ Content-Type: application/json
     "tipoHabitacion": "SUITE"
 }
 
+
+### Crear habitación con max pax
+POST http://localhost:8080/api/habitaciones/hotel/4
+Content-Type: application/json
+
+{
+    "numero": "203",
+    "precioBase": 180.0,
+    "tipoHabitacion": "DOBLE",
+    "maxPax": 2
+}
+
+### Crear habitación doble en hotel 23
+POST http://localhost:8080/api/habitaciones/hotel/23
+Content-Type: application/json
+
+{
+    "numero": "100",
+    "precioBase": 510.0,
+    "tipoHabitacion": "DOBLE",
+    "maxPax": 2
+}
+
+### Crear habitación suite en hotel 23
+POST http://localhost:8080/api/habitaciones/hotel/23
+Content-Type: application/json
+
+{
+    "numero": "300",
+    "precioBase": 990.0,
+    "tipoHabitacion": "SUITE",
+    "maxPax": 4
+}
+
+
 ### =========================
 ### CONSULTAS GET
 ### =========================
@@ -108,8 +155,11 @@ GET http://localhost:8080/api/hoteles
 ### Obtener todas las habitaciones
 GET http://localhost:8080/api/habitaciones
 
-### Obtener habitación individual
+### Obtener habitación 22
 GET http://localhost:8080/api/habitaciones/22
+
+### Obtener habitaciones hotel 23
+GET http://localhost:8080/api/habitaciones/hotel/23
 
 ### Obtener habitación por ID
 GET http://localhost:8080/api/habitaciones/1
@@ -136,7 +186,7 @@ Content-Type: application/json
 }
 
 ### Eliminar habitación
-DELETE http://localhost:8080/api/habitaciones/1
+DELETE http://localhost:8080/api/habitaciones/67
 
 ### Error: tipo de habitación obligatorio
 POST http://localhost:8080/api/habitaciones/hotel/1

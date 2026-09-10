@@ -94,6 +94,32 @@ Content-Type: application/json
   "fechaSalida": "2026-11-20"
 }
 
+### Crear reserva con num pax
+POST http://localhost:8080/api/reservas
+Content-Type: application/json
+
+{
+    "hotelId": 4,
+    "tipoHabitacion": "DOBLE",
+    "fechaEntrada": "2026-12-01",
+    "fechaSalida": "2026-12-03",
+    "clienteId": 5,
+    "numPax": 2
+}
+
+### Crear reserva con num pax en hotel 23
+POST http://localhost:8080/api/reservas
+Content-Type: application/json
+
+{
+    "hotelId": 23,
+    "tipoHabitacion": "DOBLE",
+    "fechaEntrada": "2026-11-01",
+    "fechaSalida": "2026-11-03",
+    "clienteId": 5,
+    "numPax": 2
+}
+
 ### Confirmar reserva PENDIENTE 
 PUT http://localhost:8080/api/reservas/27/confirmar
 
@@ -118,7 +144,7 @@ GET http://localhost:8080/api/reservas/20
 ###
 
 ### Obtener reservas de un hotel
-GET http://localhost:8080/api/reservas/hotel/2
+GET http://localhost:8080/api/reservas/hotel/23
 
 ###
 
@@ -128,7 +154,7 @@ GET http://localhost:8080/api/reservas/habitacion/24
 ###
 
 ### Obtener reserva con precio total
-GET http://localhost:8080/api/reservas/29
+GET http://localhost:8080/api/reservas/31
 
 ### Ver disponibilidad reserva por fecha, hotel y tipo de habitación
 GET http://localhost:8080/api/reservas/probar-disponibilidad
@@ -462,4 +488,21 @@ Content-Type: application/json
 
 {
   "clienteId": 9999
+}
+
+### Actualizar numPax de reserva
+PATCH http://localhost:8080/api/reservas/31
+Content-Type: application/json
+
+{
+  "numPax": 5
+}
+
+### Actualizar numPax de reserva
+PATCH http://localhost:8080/api/reservas/31
+Content-Type: application/json
+
+{
+  "tipoHabitacion": "SUITE",
+  "numPax": 4
 }

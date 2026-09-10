@@ -2,6 +2,8 @@ package com.sdover.hotelapi.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Reserva {
@@ -22,6 +25,8 @@ public class Reserva {
     private LocalDateTime fechaCreacion;
     private LocalDate fechaEntrada;
     private LocalDate fechaSalida;
+    private LocalDateTime fechaHoraCheckin;
+    private Integer numPax;
     private Double precioTotal;
 
     @Enumerated(EnumType.STRING)
@@ -35,6 +40,9 @@ public class Reserva {
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
+    @OneToMany(mappedBy = "reserva")
+    private List<Acompanante> acompanantes = new ArrayList<>();
+
     public Reserva () {}
 
     public Reserva (
@@ -42,20 +50,26 @@ public class Reserva {
         LocalDateTime fechaCreacion,
         LocalDate fechaEntrada,
         LocalDate fechaSalida,
+        LocalDateTime fechaHoraCheckin,
+        Integer numPax,
         Double precioTotal,
         EstadoReserva estadoReserva,
         Habitacion habitacion,
-        Cliente cliente
+        Cliente cliente,
+        List<Acompanante> acompanantes
     ) {
 
         this.id = id;
         this.fechaCreacion = fechaCreacion;
         this.fechaEntrada = fechaEntrada;
         this.fechaSalida = fechaSalida;
+        this.fechaHoraCheckin = fechaHoraCheckin;
+        this.numPax = numPax;
         this.precioTotal = precioTotal;
         this.estadoReserva = estadoReserva;
         this.habitacion = habitacion;
         this.cliente = cliente;
+        this.acompanantes = acompanantes;
     }
 
     public Long getId() {
@@ -120,6 +134,30 @@ public class Reserva {
 
     public void setPrecioTotal(Double precioTotal) {
         this.precioTotal = precioTotal;
+    }
+
+    public Integer getNumPax() {
+        return numPax;
+    }
+
+    public void setNumPax(Integer numPax) {
+        this.numPax = numPax;
+    }
+
+    public LocalDateTime getFechaHoraCheckin() {
+        return fechaHoraCheckin;
+    }
+
+    public void setFechaHoraCheckin(LocalDateTime fechaHoraCheckin) {
+        this.fechaHoraCheckin = fechaHoraCheckin;
+    }
+
+    public List<Acompanante> getAcompanantes() {
+        return acompanantes;
+    }
+
+    public void setAcompanantes(List<Acompanante> acompanantes) {
+        this.acompanantes = acompanantes;
     }
 
 }

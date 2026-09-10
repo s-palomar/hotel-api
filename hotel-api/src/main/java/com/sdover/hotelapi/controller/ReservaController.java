@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sdover.hotelapi.dto.CheckinRequest;
 import com.sdover.hotelapi.dto.ReservaRequest;
 import com.sdover.hotelapi.dto.ReservaResponse;
 import com.sdover.hotelapi.dto.ReservaUpdateRequest;
@@ -107,6 +108,17 @@ public class ReservaController {
                 reservaService.actualizarReserva(id, request);
 
         return ResponseEntity.ok(reservaActualizada);
+    }
+
+    // PATCH /api/reservas/{id}
+    @PatchMapping("/{id}/checkin")
+    public ResponseEntity<ReservaResponse> hacerCheckin(
+            @PathVariable Long id,
+            @RequestBody CheckinRequest request) {
+
+        ReservaResponse reserva = reservaService.hacerCheckin(id, request);
+
+        return ResponseEntity.ok(reserva);
     }
 
     // Para probar reserva con solapamiento de fechas

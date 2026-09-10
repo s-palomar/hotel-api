@@ -11,6 +11,7 @@ public class ReservaUpdateRequest {
     private LocalDate fechaEntrada;
     private LocalDate fechaSalida;
     private Long clienteId;
+    private Integer numPax;
 
     public ReservaUpdateRequest () {}
 
@@ -18,12 +19,14 @@ public class ReservaUpdateRequest {
                                 TipoHabitacion tipoHabitacion,
                                 LocalDate fechaEntrada,
                                 LocalDate fechaSalida,
-                                Long clienteId) {
+                                Long clienteId,
+                                Integer numPax) {
         this.hotelId = hotelId;
         this.tipoHabitacion = tipoHabitacion;
         this.fechaEntrada = fechaEntrada;
         this.fechaSalida = fechaSalida;
         this.clienteId = clienteId;
+        this.numPax = numPax;
     }
 
     public Long getHotelId() {
@@ -66,4 +69,11 @@ public class ReservaUpdateRequest {
         this.clienteId = clienteId;
     }
  
+    public Integer getNumPax() {
+        return numPax;
+    }
+
+    public void setNumPax(Integer numPax) {
+        this.numPax = numPax;
+    }
 }

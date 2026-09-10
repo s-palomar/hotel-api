@@ -44,10 +44,12 @@ public class HabitacionService {
         }
         
         Habitacion habitacion = new Habitacion();
+
         habitacion.setTipoHabitacion(request.getTipoHabitacion());
         habitacion.setNumero(request.getNumero());
         habitacion.setPrecioBase(request.getPrecioBase());
         habitacion.setHotel(hotel);
+        habitacion.setMaxPax(request.getMaxPax());
         
         Habitacion habitacionGuardada = habitacionRepository.save(habitacion);
 
@@ -55,7 +57,8 @@ public class HabitacionService {
             habitacionGuardada.getId(),
             habitacionGuardada.getTipoHabitacion(),
             habitacionGuardada.getNumero(),
-            habitacionGuardada.getPrecioBase()
+            habitacionGuardada.getPrecioBase(),
+            habitacionGuardada.getMaxPax()
         );
     }
     
@@ -116,7 +119,8 @@ public class HabitacionService {
                 habitacion.getId(),
                 habitacion.getTipoHabitacion(),
                 habitacion.getNumero(),
-                habitacion.getPrecioBase()
+                habitacion.getPrecioBase(),
+                habitacion.getMaxPax()
             );
     }
 }

@@ -14,20 +14,25 @@ public class HabitacionRequest {
     @NotBlank(message = "El número no puede estar vacío") // NotBlank para String
     private String numero;
 
-    @NotNull(message = "El precio no puede estar vacío") // Para Double
+    @NotNull(message = "El precio no puede estar vacío") // Para Double    
     @PositiveOrZero(message = "El precio debe ser 0 ó más")
     private Double precioBase;
+
+    @NotNull(message = "El número máximo de ocupantes no puede estar vacío") // Para Integer
+    private Integer maxPax;
 
     public HabitacionRequest () {}
 
     public HabitacionRequest (
         TipoHabitacion tipoHabitacion,
         String numero,
-        Double precioBase
+        Double precioBase,
+        Integer maxPax
     ) {
         this.tipoHabitacion = tipoHabitacion;
         this.numero = numero;
         this.precioBase = precioBase;
+        this.maxPax = maxPax;
     }
 
     public TipoHabitacion getTipoHabitacion() {
@@ -54,4 +59,11 @@ public class HabitacionRequest {
         this.precioBase = precioBase;
     }
 
+    public Integer getMaxPax() {
+        return maxPax;
+    }
+
+    public void setMaxPax(Integer maxPax) {
+        this.maxPax = maxPax;
+    }
 }

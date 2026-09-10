@@ -21,6 +21,7 @@ public class Habitacion {
 
     private String numero;
     private Double precioBase;
+    private Integer maxPax;
 
 
     @ManyToOne
@@ -34,13 +35,15 @@ public class Habitacion {
         TipoHabitacion tipoHabitacion,
         String numero,
         Double precioBase,
-        Hotel hotel
+        Hotel hotel,
+        Integer maxPax
     ) {
         this.id = id;
         this.tipoHabitacion = tipoHabitacion;
         this.numero = numero;
         this.precioBase = precioBase;
         this.hotel = hotel;
+        this.maxPax = maxPax;
     }
 
     public Long getId() {
@@ -82,4 +85,13 @@ public class Habitacion {
     public void setHotel(Hotel hotel) {
         this.hotel = hotel;
     }
+
+    public Integer getMaxPax() {
+        return maxPax;
+    }
+
+    public void setMaxPax(Integer maxPax) {
+        this.maxPax = maxPax;
+    }
+
 }

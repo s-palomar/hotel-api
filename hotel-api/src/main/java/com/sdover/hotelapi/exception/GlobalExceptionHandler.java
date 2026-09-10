@@ -262,4 +262,18 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.CONFLICT)
                 .body(error);
         }
+
+        @ExceptionHandler(CapacidadHabitacionExcedidaException.class)
+        public ResponseEntity<ErrorResponse> manejarCapacidadHabitacionExcedidaException(
+                CapacidadHabitacionExcedidaException e) {
+
+        ErrorResponse error = new ErrorResponse(
+                e.getMessage(),
+                HttpStatus.CONFLICT.value());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(error);
+        }
+        
 }

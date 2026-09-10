@@ -8,6 +8,7 @@ public class HabitacionResponse {
     private TipoHabitacion tipoHabitacion;
     private String numero;
     private Double precioBase;
+    private Integer maxPax;
 
     public HabitacionResponse() {}
 
@@ -15,12 +16,14 @@ public class HabitacionResponse {
         Long id,
         TipoHabitacion tipoHabitacion,
         String numero,
-        Double precioBase
+        Double precioBase,
+        Integer maxPax
     ) {
         this.id = id;
         this.tipoHabitacion = tipoHabitacion;
         this.numero = numero;
         this.precioBase = precioBase;
+        this.maxPax = maxPax;
     }
 
     public TipoHabitacion getTipoHabitacion() {
@@ -32,8 +35,8 @@ public class HabitacionResponse {
     }
 
     public Long getId() {
-    return id;
-}
+        return id;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -53,5 +56,13 @@ public class HabitacionResponse {
 
     public void setPrecioBase(Double precioBase) {
         this.precioBase = precioBase;
+    }
+
+    public Integer getMaxPax() {
+        return maxPax;
+    }
+
+    public void setMaxPax(Integer maxPax) {
+        this.maxPax = maxPax;
     }
 }

@@ -28,6 +28,8 @@ public class ReservaResponse {
 
     private String clienteDni;
 
+    private Integer numPax;
+
     private Double precioTotal;
 
     public ReservaResponse() {
@@ -43,6 +45,7 @@ public class ReservaResponse {
             EstadoReserva estadoReserva,
             Long clienteId,
             String clienteDni,
+            Integer numPax,
             Double precioTotal
         ) {
 
@@ -55,6 +58,7 @@ public class ReservaResponse {
         this.estadoReserva = estadoReserva;
         this.clienteId = clienteId;
         this.clienteDni = clienteDni;
+        this.numPax = numPax;
         this.precioTotal = precioTotal;
     }
 
@@ -138,4 +142,11 @@ public class ReservaResponse {
         this.precioTotal = precioTotal;
     }
 
+    public Integer getNumPax() {
+        return numPax;
+    }
+
+    public void setNumPax(Integer numPax) {
+        this.numPax = numPax;
+    }
 }

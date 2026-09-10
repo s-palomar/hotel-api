@@ -157,6 +157,7 @@ public class ClienteService {
                 reserva.getEstadoReserva(),
                 reserva.getCliente().getId(),
                 reserva.getCliente().getDni(),
+                reserva.getNumPax(),
                 reserva.getPrecioTotal()
         );
     }

@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.sdover.hotelapi.HotelApiApplication;
+import com.sdover.hotelapi.dto.CheckinRequest;
 import com.sdover.hotelapi.dto.ReservaRequest;
 import com.sdover.hotelapi.dto.ReservaResponse;
 import com.sdover.hotelapi.dto.ReservaUpdateRequest;
@@ -23,6 +24,7 @@ import com.sdover.hotelapi.exception.ReservaNoEncontradaException;
 import com.sdover.hotelapi.exception.ReservaNoModificableException;
 import com.sdover.hotelapi.exception.ReservaNoPendienteException;
 import com.sdover.hotelapi.exception.ReservaUpdateVaciaException;
+import com.sdover.hotelapi.exception.CapacidadHabitacionExcedidaException;
 import com.sdover.hotelapi.model.Cliente;
 import com.sdover.hotelapi.model.EstadoReserva;
 import com.sdover.hotelapi.model.Habitacion;
@@ -63,52 +65,73 @@ public class ReservaService {
         // Validar fechas
         if (!request.getFechaSalida().isAfter(request.getFechaEntrada())) {
 
-            throw new FechasReservaInvalidasException(
-                    "La fecha de salida debe ser posterior a la fecha de entrada.");
+                throw new FechasReservaInvalidasException(
+                        "La fecha de salida debe ser posterior a la fecha de entrada.");
         }
 
         // Buscar hotel
         Hotel hotel = hotelRepository.findById(request.getHotelId())
-            .orElseThrow(() ->
-                new HotelNoEncontradoException(
-                        "No existe ningún hotel con id " + request.getHotelId()));
+                .orElseThrow(() ->
+                        new HotelNoEncontradoException(
+                                "No existe ningún hotel con id " + request.getHotelId()));
 
         // Buscar cliente
         Cliente cliente = clienteRepository.findById(request.getClienteId())
-            .orElseThrow(() ->
-                new ClienteNoEncontradoException(
-                        "No existe ningún cliente con id " + request.getClienteId()));
-
+                .orElseThrow(() ->
+                        new ClienteNoEncontradoException(
+                                "No existe ningún cliente con id " + request.getClienteId()));
 
         // Obtener las habitaciones candidatas
-        List<Habitacion> habitaciones = habitacionRepository.findByHotelIdAndTipoHabitacion(
-                    hotel.getId(),
-                    request.getTipoHabitacion());
+        List<Habitacion> habitaciones =
+                habitacionRepository.findByHotelIdAndTipoHabitacion(
+                        hotel.getId(),
+                        request.getTipoHabitacion());
 
         // Comprobar que existen habitaciones de ese tipo
         if (habitaciones.isEmpty()) {
-            throw new HabitacionNoDisponibleException(
-                    "El hotel no dispone de habitaciones del tipo "
-                    + request.getTipoHabitacion());
+                throw new HabitacionNoDisponibleException(
+                        "El hotel no dispone de habitaciones del tipo "
+                                + request.getTipoHabitacion());
         }
 
-        // Recorrerlas
+        // Variable para saber si hemos encontrado alguna habitación libre
+        // pero demasiado pequeña para el número de huéspedes
+        boolean hayHabitacionSinCapacidad = false;
+
+        // Recorrer las habitaciones candidatas
         for (Habitacion habitacion : habitaciones) {
 
-            boolean ocupada =
-                    reservaRepository.existsOverlappingReservation(
-                            habitacion.getId(),
-                            EstadoReserva.CANCELADA,
-                            request.getFechaEntrada(),
-                            request.getFechaSalida());
-                        
-            // Habitación disponible: crear la reserva
-            if (!ocupada) {
+                boolean ocupada =
+                        reservaRepository.existsOverlappingReservation(
+                                habitacion.getId(),
+                                EstadoReserva.CANCELADA,
+                                request.getFechaEntrada(),
+                                request.getFechaSalida());
 
+                // Si está ocupada, pasamos a la siguiente habitación
+                if (ocupada) {
+                continue;
+                }
+
+                // La habitación está libre, comprobamos su capacidad
+                if (request.getNumPax() > habitacion.getMaxPax()) {
+                hayHabitacionSinCapacidad = true;
+                continue;
+                }
+
+                // Habitación libre y con capacidad suficiente → crear reserva
                 Reserva reserva = new Reserva();
+
                 LocalDate fechaEntrada = request.getFechaEntrada();
                 LocalDate fechaSalida = request.getFechaSalida();
-                Double precioTotal = calcularPrecioTotal(habitacion, fechaEntrada, fechaSalida);
+
+                Double precioTotal =
+                        calcularPrecioTotal(
+                                habitacion,
+                                fechaEntrada,
+                                fechaSalida);
+
+                Integer numPax = request.getNumPax();
 
                 reserva.setHabitacion(habitacion);
                 reserva.setFechaCreacion(LocalDateTime.now());
@@ -116,20 +139,31 @@ public class ReservaService {
                 reserva.setFechaSalida(fechaSalida);
                 reserva.setPrecioTotal(precioTotal);
                 reserva.setCliente(cliente);
+                reserva.setNumPax(numPax);
                 reserva.setEstadoReserva(EstadoReserva.PENDIENTE);
 
-                Reserva reservaGuardada = reservaRepository.save(reserva);
+                Reserva reservaGuardada =
+                        reservaRepository.save(reserva);
 
-                return convertirAResponse(reservaGuardada);                
-            }
+                return convertirAResponse(reservaGuardada);
         }
 
-        // Si no hay habitaciones libres
+        // Hemos recorrido todas las habitaciones y ninguna sirve
+        if (hayHabitacionSinCapacidad) {
+                throw new CapacidadHabitacionExcedidaException(
+                        "No hay ninguna habitación disponible del tipo "
+                                + request.getTipoHabitacion()
+                                + " con capacidad suficiente para "
+                                + request.getNumPax()
+                                + " huéspedes.");
+        }
+
+        // Hay habitaciones del tipo solicitado, pero todas están ocupadas
         throw new HabitacionNoDisponibleException(
-            "No hay habitaciones disponibles del tipo "
-            + request.getTipoHabitacion()
-            + " para las fechas solicitadas.");        
-    }
+                "No hay habitaciones disponibles del tipo "
+                        + request.getTipoHabitacion()
+                        + " para las fechas solicitadas.");
+        }
 
     public ReservaResponse obtenerReserva(Long id) {
 
@@ -237,23 +271,6 @@ public class ReservaService {
         }
     }
 
-    // Convertir Reserva -> ReservaResponse
-    private ReservaResponse convertirAResponse(Reserva reserva) {
-
-        return new ReservaResponse(
-                reserva.getId(),
-                reserva.getHabitacion().getHotel().getId(),
-                reserva.getHabitacion().getTipoHabitacion(),
-                reserva.getFechaCreacion(),
-                reserva.getFechaEntrada(),
-                reserva.getFechaSalida(),
-                reserva.getEstadoReserva(),
-                reserva.getCliente().getId(),
-                reserva.getCliente().getDni(),
-                reserva.getPrecioTotal()
-        );
-    }
-
     public ReservaResponse cancelarReservaConfirmada(Long id) {
 
         Reserva reserva = reservaRepository.findById(id)
@@ -301,7 +318,8 @@ public class ReservaService {
                 && request.getTipoHabitacion() == null
                 && request.getFechaEntrada() == null
                 && request.getFechaSalida() == null
-                && request.getClienteId() == null) {
+                && request.getClienteId() == null
+                && request.getNumPax() == null)  {
 
             throw new ReservaUpdateVaciaException(
                     "No se ha indicado ningún dato para modificar la reserva.");
@@ -317,134 +335,201 @@ public class ReservaService {
                     + "la fecha de entrada y la fecha de salida.");
         }
 
+        Integer numPaxFinal = request.getNumPax() != null
+        ? request.getNumPax()
+        : reserva.getNumPax();
+
         if (reserva.getEstadoReserva() == EstadoReserva.PENDIENTE) {
 
-            boolean cambiaHabitacion = request.getHotelId() != null
-                    || request.getTipoHabitacion() != null
-                    || request.getFechaEntrada() != null
-                    || request.getFechaSalida() != null;
+                boolean cambiaHabitacion = request.getHotelId() != null
+                        || request.getTipoHabitacion() != null
+                        || request.getFechaEntrada() != null
+                        || request.getFechaSalida() != null;
 
-            if (cambiaHabitacion) {
+                if (cambiaHabitacion) {
 
-                Long hotelIdFinal = request.getHotelId() != null
-                        ? request.getHotelId()
-                        : reserva.getHabitacion().getHotel().getId();
+                        Long hotelIdFinal = request.getHotelId() != null
+                                ? request.getHotelId()
+                                : reserva.getHabitacion().getHotel().getId();
 
-                TipoHabitacion tipoHabitacionFinal = request.getTipoHabitacion() != null
-                        ? request.getTipoHabitacion()
-                        : reserva.getHabitacion().getTipoHabitacion();
+                        TipoHabitacion tipoHabitacionFinal =
+                                request.getTipoHabitacion() != null
+                                        ? request.getTipoHabitacion()
+                                        : reserva.getHabitacion().getTipoHabitacion();
 
-                LocalDate fechaEntradaFinal = request.getFechaEntrada() != null
-                        ? request.getFechaEntrada()
-                        : reserva.getFechaEntrada();
+                        LocalDate fechaEntradaFinal =
+                                request.getFechaEntrada() != null
+                                        ? request.getFechaEntrada()
+                                        : reserva.getFechaEntrada();
 
-                LocalDate fechaSalidaFinal = request.getFechaSalida() != null
-                        ? request.getFechaSalida()
-                        : reserva.getFechaSalida();
+                        LocalDate fechaSalidaFinal =
+                                request.getFechaSalida() != null
+                                        ? request.getFechaSalida()
+                                        : reserva.getFechaSalida();
 
-                Habitacion habitacionFinal = buscarHabitacionDisponible(
-                        hotelIdFinal,
-                        tipoHabitacionFinal,
-                        fechaEntradaFinal,
-                        fechaSalidaFinal,
-                        reserva.getId());
+                        Habitacion habitacionFinal = buscarHabitacionDisponible(
+                                hotelIdFinal,
+                                tipoHabitacionFinal,
+                                fechaEntradaFinal,
+                                fechaSalidaFinal,
+                                reserva.getId());
+
+                        if (numPaxFinal > habitacionFinal.getMaxPax()) {
+                        throw new CapacidadHabitacionExcedidaException(
+                                "La habitación " + habitacionFinal.getNumero()
+                                + " admite un máximo de "
+                                + habitacionFinal.getMaxPax()
+                                + " huéspedes.");
+                        }
+
+                        Double precioFinal = calcularPrecioTotal(
+                                habitacionFinal,
+                                fechaEntradaFinal,
+                                fechaSalidaFinal);
+
+                        reserva.setHabitacion(habitacionFinal);
+                        reserva.setFechaEntrada(fechaEntradaFinal);
+                        reserva.setFechaSalida(fechaSalidaFinal);
+                        reserva.setPrecioTotal(precioFinal);
+
+                } else {
+
+                        // No cambia habitación: comprobar capacidad de la habitación actual
+                        if (numPaxFinal > reserva.getHabitacion().getMaxPax()) {
+                        throw new CapacidadHabitacionExcedidaException(
+                                "La habitación " + reserva.getHabitacion().getNumero()
+                                + " admite un máximo de "
+                                + reserva.getHabitacion().getMaxPax()
+                                + " huéspedes.");
+                        }
+                }
+
+                // Guardar siempre el número final de huéspedes
+                reserva.setNumPax(numPaxFinal);
+
+                if (request.getClienteId() != null) {
+
+                        Cliente clienteFinal = clienteRepository.findById(request.getClienteId())
+                                .orElseThrow(() ->
+                                        new ClienteNoEncontradoException(
+                                                "No existe cliente con id "
+                                                + request.getClienteId()));
+
+                        reserva.setCliente(clienteFinal);
+                }
+
+                reservaRepository.save(reserva);
+
+                return convertirAResponse(reserva);
                 
-                Double precioFinal = calcularPrecioTotal(habitacionFinal, fechaEntradaFinal, fechaSalidaFinal);
-
-                reserva.setHabitacion(habitacionFinal);
-                reserva.setFechaEntrada(fechaEntradaFinal);
-                reserva.setFechaSalida(fechaSalidaFinal);
-                reserva.setPrecioTotal(precioFinal);
-            } 
-            
-            if (request.getClienteId() != null) {
-
-                Cliente clienteFinal = clienteRepository.findById(request.getClienteId())
-                        .orElseThrow(() ->
-                                new ClienteNoEncontradoException(
-                                        "No existe cliente con id " + request.getClienteId()));
-
-                reserva.setCliente(clienteFinal);
-            }
-           
-            reservaRepository.save(reserva);
-
-            return convertirAResponse(reserva);
 
         } else if (reserva.getEstadoReserva() == EstadoReserva.CONFIRMADA) {
 
-            boolean cambiaHabitacion = request.getHotelId() != null
-                    || request.getTipoHabitacion() != null
-                    || request.getFechaEntrada() != null
-                    || request.getFechaSalida() != null;
-
-            // Comprobar regla de 48 h para cambios de fechas u hotel
-            if (cambiaHabitacion) {
-
-                // Asignar valores finales
-                Long hotelIdFinal = request.getHotelId() != null
-                        ? request.getHotelId()
-                        : reserva.getHabitacion().getHotel().getId();
-
-                TipoHabitacion tipoHabitacionFinal = request.getTipoHabitacion() != null
-                        ? request.getTipoHabitacion()
-                        : reserva.getHabitacion().getTipoHabitacion();
-
-                LocalDate fechaEntradaFinal = request.getFechaEntrada() != null
-                        ? request.getFechaEntrada()
-                        : reserva.getFechaEntrada();
-
-                LocalDate fechaSalidaFinal = request.getFechaSalida() != null
-                        ? request.getFechaSalida()
-                        : reserva.getFechaSalida();
-
-                if (request.getHotelId() != null
+                boolean cambiaHabitacion = request.getHotelId() != null
+                        || request.getTipoHabitacion() != null
                         || request.getFechaEntrada() != null
-                        || request.getFechaSalida() != null) {
+                        || request.getFechaSalida() != null;
 
-                    LocalDateTime fechaLimite = reserva.getFechaEntrada()
-                            .atTime(15, 0)
-                            .minusHours(48);
+                // Comprobar regla de 48 h para cambios de fechas u hotel
+                if (cambiaHabitacion) {
 
-                    if (LocalDateTime.now().isAfter(fechaLimite)) {
-                        throw new ReservaNoModificableException(
-                                "La reserva con id " + id
-                                + " no puede modificarse porque faltan menos de 48 horas "
-                                + "para la fecha de entrada.");
-                    }
+                        // Asignar valores finales
+                        Long hotelIdFinal = request.getHotelId() != null
+                                ? request.getHotelId()
+                                : reserva.getHabitacion().getHotel().getId();
+
+                        TipoHabitacion tipoHabitacionFinal =
+                                request.getTipoHabitacion() != null
+                                        ? request.getTipoHabitacion()
+                                        : reserva.getHabitacion().getTipoHabitacion();
+
+                        LocalDate fechaEntradaFinal =
+                                request.getFechaEntrada() != null
+                                        ? request.getFechaEntrada()
+                                        : reserva.getFechaEntrada();
+
+                        LocalDate fechaSalidaFinal =
+                                request.getFechaSalida() != null
+                                        ? request.getFechaSalida()
+                                        : reserva.getFechaSalida();
+
+                        // La regla de 48 h solo afecta a cambios de hotel o fechas
+                        if (request.getHotelId() != null
+                                || request.getFechaEntrada() != null
+                                || request.getFechaSalida() != null) {
+
+                        LocalDateTime fechaLimite = reserva.getFechaEntrada()
+                                .atTime(15, 0)
+                                .minusHours(48);
+
+                        if (LocalDateTime.now().isAfter(fechaLimite)) {
+                                throw new ReservaNoModificableException(
+                                        "La reserva con id " + id
+                                        + " no puede modificarse porque faltan menos de 48 horas "
+                                        + "para la fecha de entrada.");
+                        }
+                        }
+
+                        // Buscar una habitación disponible
+                        Habitacion habitacionFinal = buscarHabitacionDisponible(
+                                hotelIdFinal,
+                                tipoHabitacionFinal,
+                                fechaEntradaFinal,
+                                fechaSalidaFinal,
+                                reserva.getId());
+
+                        // Comprobar que la nueva habitación tiene capacidad suficiente
+                        if (numPaxFinal > habitacionFinal.getMaxPax()) {
+                        throw new CapacidadHabitacionExcedidaException(
+                                "La habitación " + habitacionFinal.getNumero()
+                                + " admite un máximo de "
+                                + habitacionFinal.getMaxPax()
+                                + " huéspedes.");
+                        }
+
+                        // Recalcular precio si cambia habitación o fechas
+                        Double precioFinal = calcularPrecioTotal(
+                                habitacionFinal,
+                                fechaEntradaFinal,
+                                fechaSalidaFinal);
+
+                        // Asignar los nuevos valores a la reserva
+                        reserva.setHabitacion(habitacionFinal);
+                        reserva.setFechaEntrada(fechaEntradaFinal);
+                        reserva.setFechaSalida(fechaSalidaFinal);
+                        reserva.setPrecioTotal(precioFinal);
+
+                } else {
+
+                        // No cambia habitación: comprobar capacidad de la habitación actual
+                        if (numPaxFinal > reserva.getHabitacion().getMaxPax()) {
+                        throw new CapacidadHabitacionExcedidaException(
+                                "La habitación " + reserva.getHabitacion().getNumero()
+                                + " admite un máximo de "
+                                + reserva.getHabitacion().getMaxPax()
+                                + " huéspedes.");
+                        }
                 }
 
-                // Buscar habitación
-                Habitacion habitacionFinal = buscarHabitacionDisponible(
-                        hotelIdFinal,
-                        tipoHabitacionFinal,
-                        fechaEntradaFinal,
-                        fechaSalidaFinal,
-                        reserva.getId()
-                );
+                // Guardar siempre el número final de huéspedes
+                reserva.setNumPax(numPaxFinal);
 
-                Double precioFinal = calcularPrecioTotal(habitacionFinal, fechaEntradaFinal, fechaSalidaFinal);
+                // Cambiar cliente si se ha indicado
+                if (request.getClienteId() != null) {
 
-                // Asignar los nuevos valores a la reserva
-                reserva.setHabitacion(habitacionFinal);
-                reserva.setFechaEntrada(fechaEntradaFinal);
-                reserva.setFechaSalida(fechaSalidaFinal);
-                reserva.setPrecioTotal(precioFinal);
-            }
-            
-            if (request.getClienteId() != null) {
+                        Cliente clienteFinal = clienteRepository.findById(request.getClienteId())
+                                .orElseThrow(() ->
+                                        new ClienteNoEncontradoException(
+                                                "No existe cliente con id "
+                                                + request.getClienteId()));
 
-                Cliente clienteFinal = clienteRepository.findById(request.getClienteId())
-                        .orElseThrow(() ->
-                                new ClienteNoEncontradoException(
-                                        "No existe cliente con id " + request.getClienteId()));
-                                    
-                reserva.setCliente(clienteFinal);
-            }
+                        reserva.setCliente(clienteFinal);
+                }
 
-            reservaRepository.save(reserva);
+                reservaRepository.save(reserva);
 
-            return convertirAResponse(reserva);
+                return convertirAResponse(reserva);
+                
         } else {
 
             throw new ReservaNoModificableException("La reserva con id " + id
@@ -487,6 +572,24 @@ public class ReservaService {
         return precioTotal;
     }
 
+    // Convertir Reserva -> ReservaResponse
+    private ReservaResponse convertirAResponse(Reserva reserva) {
+
+        return new ReservaResponse(
+                reserva.getId(),
+                reserva.getHabitacion().getHotel().getId(),
+                reserva.getHabitacion().getTipoHabitacion(),
+                reserva.getFechaCreacion(),
+                reserva.getFechaEntrada(),
+                reserva.getFechaSalida(),
+                reserva.getEstadoReserva(),
+                reserva.getCliente().getId(),
+                reserva.getCliente().getDni(),
+                reserva.getNumPax(),
+                reserva.getPrecioTotal()
+        );
+    }
+
     public void probarDisponibilidad() {
 
         List<Habitacion> habitacionesDisponibles =
@@ -499,6 +602,19 @@ public class ReservaService {
         );
 
         System.out.println("Habitaciones disponibles: " + habitacionesDisponibles);
+    }
+
+    public ReservaResponse hacerCheckin(Long id, CheckinRequest request) {
+
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(() ->
+                        new ReservaNoEncontradaException(
+                                "No existe reserva con id " + id));
+
+        // Aquí iremos añadiendo las comprobaciones del check-in
+
+
+        return convertirAResponse(reserva);
     }
 
 }

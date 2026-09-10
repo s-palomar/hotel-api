@@ -22,6 +22,9 @@ public class ReservaRequest {
 
     @NotNull(message = "El id de cliente es obligatorio")
     Long clienteId;
+    
+    @NotNull(message = "El número de huéspedes es obligatorio")
+    private Integer numPax;
 
     public ReservaRequest() {
     }
@@ -31,7 +34,8 @@ public class ReservaRequest {
             TipoHabitacion tipoHabitacion,
             LocalDate fechaEntrada,
             LocalDate fechaSalida,
-            Long clienteId
+            Long clienteId,
+            Integer numPax
         ) {
 
         this.hotelId = hotelId;
@@ -39,6 +43,7 @@ public class ReservaRequest {
         this.fechaEntrada = fechaEntrada;
         this.fechaSalida = fechaSalida;
         this.clienteId = clienteId;
+        this.numPax = numPax;
     }
     
     public Long getHotelId() {
@@ -79,6 +84,14 @@ public class ReservaRequest {
 
     public void setClienteId(Long clienteId) {
         this.clienteId = clienteId;
+    }
+
+    public Integer getNumPax() {
+        return numPax;
+    }
+
+    public void setNumPax(Integer numPax) {
+        this.numPax = numPax;
     }
     
 }
