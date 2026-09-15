@@ -77,9 +77,9 @@ Content-Type: application/json
 
 {
     "hotelId": 23,
-    "tipoHabitacion": "DOBLE",
-    "fechaEntrada": "2026-09-14",
-    "fechaSalida": "2026-09-16",
+    "tipoHabitacion": "SUITE",
+    "fechaEntrada": "2026-09-24",
+    "fechaSalida": "2026-09-26",
     "clienteId": 1,
     "numPax": 2
 }
@@ -223,7 +223,7 @@ GET http://localhost:8080/api/reservas/999
 ###
 
 ### Confirmar una reserva PENDIENTE
-PUT http://localhost:8080/api/reservas/43/confirmar
+PUT http://localhost:8080/api/reservas/44/confirmar
 
 ### Confirmar una reserva CONFIRMADA
 PUT http://localhost:8080/api/reservas/7/confirmar
@@ -562,3 +562,13 @@ Content-Type: application/json
 GET http://localhost:8080/api/acompanantes/reserva/40
 Content-Type: application/json
 
+### Hacer pago reserva pendiente <50%
+POST http://localhost:8080/api/reservas/30/pagos
+Content-Type: application/json
+
+{
+  "importe": 1000.0
+}
+
+### Intentar confirmar reserva pago <50%
+PUT http://localhost:8080/api/reservas/43/confirmar

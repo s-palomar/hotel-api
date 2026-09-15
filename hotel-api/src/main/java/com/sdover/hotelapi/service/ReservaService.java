@@ -273,6 +273,21 @@ public class ReservaService {
                     + " ya está CONFIRMADA.");
         }
 
+        if (estado != EstadoReserva.PENDIENTE) {
+
+            throw new ReservaNoPendienteException(
+                "La reserva con id " + id
+                + " no está PENDIENTE y no puede confirmarse.");
+        }
+
+        double pagoMinimo = reserva.getPrecioTotal() * 0.50;
+
+        if (reserva.getImportePagado() < pagoMinimo) {
+
+            throw new ImporteIncorrectoException(
+                "La reserva debe tener pagado al menos el 50% para poder confirmarse.");
+        }
+
         reserva.setEstadoReserva(EstadoReserva.CONFIRMADA);
 
         Reserva reservaConfirmada = reservaRepository.save(reserva);
@@ -725,6 +740,17 @@ public class ReservaService {
                 .orElseThrow(() ->
                         new ReservaNoEncontradaException(
                                 "No existe reserva con id " + id));
+
+        // Comprobar que la reserva no está CANCELADA ni FINALIZADA
+        if (reserva.getEstadoReserva() == EstadoReserva.CANCELADA) {
+                throw new ReservaCanceladaException(
+                "No se puede registrar un pago para una reserva cancelada.");
+        }
+
+        if (reserva.getEstadoReserva() == EstadoReserva.FINALIZADA) {
+                throw new ReservaNoModificableException(
+                "No se puede registrar un pago para una reserva finalizada.");
+        }
 
         // Comprobar que el importe recibido es válido
         if(request.getImporte() <= 0) {
