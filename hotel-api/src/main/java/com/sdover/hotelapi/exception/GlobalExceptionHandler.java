@@ -120,6 +120,19 @@ public class GlobalExceptionHandler {
                         .body(error);
         }
 
+        @ExceptionHandler(CheckinFueraDeFechaException.class)
+        public ResponseEntity<ErrorResponse> manejarCheckinFueraDeFechaException(
+                        CheckinFueraDeFechaException e) {
+
+                ErrorResponse error = new ErrorResponse(
+                        e.getMessage(),
+                        HttpStatus.BAD_REQUEST.value());
+
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(error);
+        }        
+
         @ExceptionHandler(ClienteYaExisteException.class)
         public ResponseEntity<ErrorResponse> manejarClienteYaExiste(
                 ClienteYaExisteException e) {
@@ -134,7 +147,7 @@ public class GlobalExceptionHandler {
         }
 
         @ExceptionHandler(ClienteNoEncontradoException.class)
-        public ResponseEntity<ErrorResponse> manejarClienteNoEncontrado(
+        public ResponseEntity<ErrorResponse> manejarClienteNoEncontradoException(
                 ClienteNoEncontradoException e) {
 
         ErrorResponse error = new ErrorResponse(
@@ -158,6 +171,32 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.CONFLICT)
                 .body(error);
         }    
+
+        @ExceptionHandler(ClienteNoCoincideException.class)
+        public ResponseEntity<ErrorResponse> manejarClienteNoCoincideException(
+                ClienteNoCoincideException e) {
+
+        ErrorResponse error = new ErrorResponse(
+                e.getMessage(),
+                HttpStatus.CONFLICT.value());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(error);
+        }
+
+        @ExceptionHandler(AcompananteNoEncontradoException.class)
+        public ResponseEntity<ErrorResponse> manejarAcompananteNoEncontradoException(
+                AcompananteNoEncontradoException e) {
+
+        ErrorResponse error = new ErrorResponse(
+                e.getMessage(),
+                HttpStatus.NOT_FOUND.value());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(error);
+        }
                 
         @ExceptionHandler(ReservaNoPendienteException.class)
         public ResponseEntity<ErrorResponse> manejarReservaNoPendienteException(
@@ -274,6 +313,71 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(error);
+        }
+
+        @ExceptionHandler(ReservaNoConfirmadaException.class)
+        public ResponseEntity<ErrorResponse> manejarReservaNoConfirmadaException(
+                ReservaNoConfirmadaException e) {
+
+                ErrorResponse error = new ErrorResponse(
+                        e.getMessage(),
+                        HttpStatus.CONFLICT.value());
+
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(error);
+        }
+    
+        @ExceptionHandler(NumPaxNoCoincideException.class)
+        public ResponseEntity<ErrorResponse> manejarNumPaxNoCoincideException(
+                NumPaxNoCoincideException e) {
+
+                ErrorResponse error = new ErrorResponse(
+                        e.getMessage(),
+                        HttpStatus.CONFLICT.value());
+
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(error);
+        }
+        
+        @ExceptionHandler(ReservaYaOcupadaException.class)
+        public ResponseEntity<ErrorResponse> manejarReservaYaOcupadaException(
+                ReservaYaOcupadaException e) {
+
+                ErrorResponse error = new ErrorResponse(
+                        e.getMessage(),
+                        HttpStatus.CONFLICT.value());
+
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(error);
+        }
+
+        @ExceptionHandler(ImporteIncorrectoException.class)
+        public ResponseEntity<ErrorResponse> manejarImporteIncorrectoException(
+                ImporteIncorrectoException e) {
+
+                ErrorResponse error = new ErrorResponse(
+                        e.getMessage(),
+                        HttpStatus.CONFLICT.value());
+
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(error);
+        }
+        
+        @ExceptionHandler(ReservaCanceladaException.class)
+        public ResponseEntity<ErrorResponse> manejarReservaCanceladaException(
+                ReservaCanceladaException e) {
+
+                ErrorResponse error = new ErrorResponse(
+                        e.getMessage(),
+                        HttpStatus.CONFLICT.value());
+
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(error);
         }
         
 }

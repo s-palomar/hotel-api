@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sdover.hotelapi.dto.HabitacionRequest;
 import com.sdover.hotelapi.dto.HabitacionResponse;
+import com.sdover.hotelapi.dto.HabitacionUpdateRequest;
 import com.sdover.hotelapi.dto.HotelResponse;
 import com.sdover.hotelapi.service.HabitacionService;
 
@@ -61,7 +62,7 @@ public class HabitacionController {
     @PutMapping("/{id}")
     public ResponseEntity<HabitacionResponse> actualizarHabitacion(
             @PathVariable Long id,
-            @Valid @RequestBody HabitacionRequest request) {
+            @Valid @RequestBody HabitacionUpdateRequest request) {
 
         HabitacionResponse habitacionActualizada =
                 habitacionService.actualizarHabitacion(id, request);

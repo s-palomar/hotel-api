@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.sdover.hotelapi.dto.AcompananteResponse;
 import com.sdover.hotelapi.dto.ClienteRequest;
 import com.sdover.hotelapi.dto.ClienteResponse;
 import com.sdover.hotelapi.dto.ReservaResponse;
@@ -11,6 +12,7 @@ import com.sdover.hotelapi.exception.ClienteDniBloqueadoException;
 import com.sdover.hotelapi.exception.ClienteNoEncontradoException;
 import com.sdover.hotelapi.exception.ClienteTieneReservasException;
 import com.sdover.hotelapi.exception.ClienteYaExisteException;
+import com.sdover.hotelapi.model.Acompanante;
 import com.sdover.hotelapi.model.Cliente;
 import com.sdover.hotelapi.model.EstadoReserva;
 import com.sdover.hotelapi.model.Reserva;
@@ -147,6 +149,11 @@ public class ClienteService {
 
     private ReservaResponse convertirReservaAResponse(Reserva reserva) {
 
+        List<AcompananteResponse> acompanantes = reserva.getAcompanantes()
+        .stream()
+        .map(this::convertirAcompananteResponse)
+        .toList();
+
         return new ReservaResponse(
                 reserva.getId(),
                 reserva.getHabitacion().getHotel().getId(),
@@ -158,7 +165,27 @@ public class ClienteService {
                 reserva.getCliente().getId(),
                 reserva.getCliente().getDni(),
                 reserva.getNumPax(),
-                reserva.getPrecioTotal()
+                reserva.getPrecioTotal(),
+                reserva.getImportePagado(),
+                reserva.getEstadoPago(),
+                reserva.getFechaHoraCheckin(),
+                acompanantes
         );
     }
+
+    private AcompananteResponse convertirAcompananteResponse(
+        Acompanante acompanante) {
+
+        return new AcompananteResponse(
+                acompanante.getId(),
+                acompanante.getDni(),
+                acompanante.getNombre(),
+                acompanante.getApellidos(),
+                acompanante.getEmail(),
+                acompanante.getTelefono(),
+                acompanante.getNacionalidad()
+        );
+    }
+
 }
+

@@ -55,8 +55,6 @@ public class ClienteController {
         return clienteService.obtenerReservasCliente(clienteId);
     }
 
-    // GET /api/reservas/cliente/{clienteId}
-
     // POST /api/clientes
     @PostMapping
     public ResponseEntity<ClienteResponse> crearCliente(

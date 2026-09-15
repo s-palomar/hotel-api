@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -28,6 +29,10 @@ public class Reserva {
     private LocalDateTime fechaHoraCheckin;
     private Integer numPax;
     private Double precioTotal;
+    private Double importePagado;
+
+    @Enumerated(EnumType.STRING)
+    private EstadoPago estadoPago;
 
     @Enumerated(EnumType.STRING)
     private EstadoReserva estadoReserva;
@@ -40,7 +45,7 @@ public class Reserva {
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    @OneToMany(mappedBy = "reserva")
+    @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL)
     private List<Acompanante> acompanantes = new ArrayList<>();
 
     public Reserva () {}
@@ -53,6 +58,8 @@ public class Reserva {
         LocalDateTime fechaHoraCheckin,
         Integer numPax,
         Double precioTotal,
+        Double importePagado,
+        EstadoPago estadoPago,
         EstadoReserva estadoReserva,
         Habitacion habitacion,
         Cliente cliente,
@@ -66,6 +73,8 @@ public class Reserva {
         this.fechaHoraCheckin = fechaHoraCheckin;
         this.numPax = numPax;
         this.precioTotal = precioTotal;
+        this.importePagado = importePagado;
+        this.estadoPago = estadoPago;
         this.estadoReserva = estadoReserva;
         this.habitacion = habitacion;
         this.cliente = cliente;
@@ -159,5 +168,23 @@ public class Reserva {
     public void setAcompanantes(List<Acompanante> acompanantes) {
         this.acompanantes = acompanantes;
     }
+
+    public Double getImportePagado() {
+        return importePagado;
+    }
+
+    public void setImportePagado(Double importePagado) {
+        this.importePagado = importePagado;
+    }
+
+    public EstadoPago getEstadoPago() {
+        return estadoPago;
+    }
+
+    public void setEstadoPago(EstadoPago estadoPago) {
+        this.estadoPago = estadoPago;
+    }
+
+
 
 }

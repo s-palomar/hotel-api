@@ -8,30 +8,6 @@
 ### CREAR RESERVAS
 ###############################################################
 
-### Crear reserva vinculada a cliente
-POST http://localhost:8080/api/reservas
-Content-Type: application/json
-
-{
-  "clienteId": 5,
-  "hotelId": 2,
-  "tipoHabitacion": "DOBLE",
-  "fechaEntrada": "2026-10-02",
-  "fechaSalida": "2026-10-12"
-}
-
-### Crear reserva 2
-POST http://localhost:8080/api/reservas
-Content-Type: application/json
-
-{
-  "clienteId": 1,
-  "hotelId": 1,
-  "tipoHabitacion": "SUITE",
-  "fechaEntrada": "2026-10-02",
-  "fechaSalida": "2026-10-12"
-}
-
 ### Crear reserva hotel 2
 POST http://localhost:8080/api/reservas
 Content-Type: application/json
@@ -70,18 +46,6 @@ Content-Type: application/json
   "fechaSalida": "2026-10-07"
 }
 
-### Crear reserva hotel 2
-POST http://localhost:8080/api/reservas
-Content-Type: application/json
-
-{
-  "clienteId": 1,
-  "hotelId": 2,
-  "tipoHabitacion": "DOBLE",
-  "fechaEntrada": "2026-10-03",
-  "fechaSalida": "2026-10-11"
-}
-
 ### Crear reserva con precio final
 POST http://localhost:8080/api/reservas
 Content-Type: application/json
@@ -114,14 +78,14 @@ Content-Type: application/json
 {
     "hotelId": 23,
     "tipoHabitacion": "DOBLE",
-    "fechaEntrada": "2026-11-01",
-    "fechaSalida": "2026-11-03",
-    "clienteId": 5,
+    "fechaEntrada": "2026-09-14",
+    "fechaSalida": "2026-09-16",
+    "clienteId": 1,
     "numPax": 2
 }
 
 ### Confirmar reserva PENDIENTE 
-PUT http://localhost:8080/api/reservas/27/confirmar
+PUT http://localhost:8080/api/reservas/42/confirmar
 
 ### Reserva ya CANCELADA
 PUT http://localhost:8080/api/reservas/13/confirmar
@@ -135,11 +99,11 @@ GET http://localhost:8080/api/reservas
 
 ###
 
-### Obtener todas las habitaciones del hotel 1
-GET http://localhost:8080/api/habitaciones/hotel/1
+### Obtener todas las habitaciones del hotel 23
+GET http://localhost:8080/api/habitaciones/hotel/23
 
 ### Obtener reserva por id reserva
-GET http://localhost:8080/api/reservas/20
+GET http://localhost:8080/api/reservas/41
 
 ###
 
@@ -166,7 +130,7 @@ GET http://localhost:8080/api/reservas/probar-disponibilidad
 ###############################################################
 
 ### Cancelar reserva
-DELETE http://localhost:8080/api/reservas/2
+DELETE http://localhost:8080/api/reservas/30
 
 ###
 
@@ -250,21 +214,6 @@ Content-Type: application/json
   "fechaSalida": "2026-09-23"
 }
 
-### Nueva reserva con fecha de creación 
-POST http://localhost:8080/api/reservas
-Content-Type: application/json
-
-{
-  "clienteId": 1,
-  "hotelId": 1,
-  "tipoHabitacion": "INDIVIDUAL",
-  "fechaEntrada": "2026-09-10",
-  "fechaSalida": "2026-09-13"
-}
-
-### Confirmación normal
-PUT http://localhost:8080/api/reservas/ID/confirmar
-
 ### Reserva cancelada no se puede confirmar
 PUT http://localhost:8080/api/reservas/13/confirmar
 
@@ -274,19 +223,13 @@ GET http://localhost:8080/api/reservas/999
 ###
 
 ### Confirmar una reserva PENDIENTE
-PUT http://localhost:8080/api/reservas/11/confirmar
-
-###
+PUT http://localhost:8080/api/reservas/43/confirmar
 
 ### Confirmar una reserva CONFIRMADA
 PUT http://localhost:8080/api/reservas/7/confirmar
 
-###
-
 ### Confirmar una reserva CANCELADA
 PUT http://localhost:8080/api/reservas/2/confirmar
-
-###
 
 ### Confirmar una reserva INEXISTENTE
 PUT http://localhost:8080/api/reservas/999/confirmar
@@ -351,7 +294,7 @@ Content-Type: application/json
 PUT http://localhost:8080/api/reservas/19/confirmar
 
 ### Cancelar reserva confirmada dentro de plazo (48h antes de fecha de entrada)
-PUT http://localhost:8080/api/reservas/19/cancelar
+PUT http://localhost:8080/api/reservas/36/cancelar
 
 ### Crear reserva - menos de 48h
 POST http://localhost:8080/api/reservas
@@ -384,7 +327,7 @@ Content-Type: application/json
 }
 
 ### Cancelar reserva PENDIENTE
-PUT http://localhost:8080/api/reservas/21/cancelar
+PUT http://localhost:8080/api/reservas/38/cancelar
 
 ### Cancelar reserva CANCELADA
 PUT http://localhost:8080/api/reservas/19/cancelar
@@ -394,11 +337,11 @@ PUT http://localhost:8080/api/reservas/9999/cancelar
 
 
 ### Actualizar fechas reserva pendiente
-PATCH http://localhost:8080/api/reservas/26
+PATCH http://localhost:8080/api/reservas/38
 Content-Type: application/json
 
 {
-  "fechaEntrada": "2026-09-10",
+  "fechaEntrada": "2026-09-13",
   "fechaSalida": "2026-09-15"
 }
 
@@ -419,20 +362,20 @@ Content-Type: application/json
 }
 
 ### Actualizar tipo habitación reserva confirmada
-PATCH http://localhost:8080/api/reservas/17
+PATCH http://localhost:8080/api/reservas/38
 Content-Type: application/json
 
 {
-  "tipoHabitacion": "DOBLE"
+  "numPax": 3
 }
 
 ### Actualizar fechas reserva confirmada >48h
-PATCH http://localhost:8080/api/reservas/27
+PATCH http://localhost:8080/api/reservas/42
 Content-Type: application/json
 
 {
-  "fechaEntrada": "2026-10-10",
-  "fechaSalida": "2026-10-15"
+  "fechaEntrada": "2026-09-14",
+  "fechaSalida": "2026-10-16"
 }
 
 ### Actualizar fechas reserva confirmada <48h
@@ -506,3 +449,116 @@ Content-Type: application/json
   "tipoHabitacion": "SUITE",
   "numPax": 4
 }
+
+### Probar checkin con fecha adelantada 
+PATCH http://localhost:8080/api/reservas/33/checkin
+Content-Type: application/json
+
+{
+  "cliente": {
+    "dni": "12345678A",
+    "nombre": "h",
+    "apellidos": "k",
+    "email": "j@j.com",
+    "telefono": "444",
+    "nacionalidad": "t",
+    "formaPago": "TARJETA"
+  },
+  "numPax": 2,
+  "acompanantes": [
+    {
+      "dni": "44414585E",
+      "nombre": "I",
+      "apellidos": "s",
+      "email": "f@r.es",
+      "telefono": "757",
+      "nacionalidad": "t"
+    }
+  ]
+}
+
+### Probar checkin con fecha correcta
+PATCH http://localhost:8080/api/reservas/40/checkin
+Content-Type: application/json
+
+{
+  "clienteDni": "12345678A",
+  "numPax": 3,
+  "acompanantes": [
+        {
+      "dni": "12345678A",
+      "nombre": "I",
+      "apellidos": "s",
+      "email": "f@r.es",
+      "telefono": "757",
+      "nacionalidad": "t"
+    },
+    {
+      "dni": "33414585E",
+      "nombre": "I",
+      "apellidos": "s",
+      "email": "f@r.es",
+      "telefono": "757",
+      "nacionalidad": "t"
+    }
+  ]
+}
+
+### Probar checkin RESERVA 
+PATCH http://localhost:8080/api/reservas/34/checkin
+Content-Type: application/json
+
+{
+  "clienteDni": "12345678A",
+  "numPax": 2,
+  "acompanantes": [
+    {
+      "dni": "92414585E",
+      "nombre": "I",
+      "apellidos": "s",
+      "email": "f@r.es",
+      "telefono": "757",
+      "nacionalidad": "t"
+    }
+  ]
+}
+
+### Checkin con acompañanante existente
+PATCH http://localhost:8080/api/reservas/36/checkin
+Content-Type: application/json
+
+{
+  "clienteDni": "12345678A",
+  "numPax": 2,
+  "acompanantes": [
+    {
+      "dni": "93414585E",
+      "nombre": "I",
+      "apellidos": "s",
+      "email": "f@r.es",
+      "telefono": "757",
+      "nacionalidad": "t"
+    }
+  ]
+}
+
+### Realizar pago inicial de reserva
+POST http://localhost:8080/api/reservas/37/pagos
+Content-Type: application/json
+
+{
+  "importe": 10.0
+}
+
+### Completar pago de reserva
+POST http://localhost:8080/api/reservas/37/pagos
+Content-Type: application/json
+
+{
+    "importe": 410.0
+}
+
+### Ver acompañantes de reserva
+GET http://localhost:8080/api/acompanantes/reserva/40
+Content-Type: application/json
+

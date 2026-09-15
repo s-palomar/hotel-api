@@ -4,14 +4,16 @@ import java.util.List;
 
 public class CheckinRequest {
 
+    private String clienteDni;
     private Integer numPax;
     private List<AcompananteRequest> acompanantes;
 
     public CheckinRequest () {};
 
-    public CheckinRequest (Integer numPax,
+    public CheckinRequest (String clienteDni, Integer numPax,
         List<AcompananteRequest> acompanantes) {
 
+            this.clienteDni = clienteDni;
             this.numPax = numPax;
             this.acompanantes = acompanantes;
         }
@@ -30,6 +32,14 @@ public class CheckinRequest {
 
     public void setAcompanantes(List<AcompananteRequest> acompanantes) {
         this.acompanantes = acompanantes;
+    }
+
+    public String getClienteDni() {
+        return clienteDni;
+    }
+
+    public void setClienteDni(String clienteDni) {
+        this.clienteDni = clienteDni;
     }
 
 }

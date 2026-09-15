@@ -2,8 +2,10 @@ package com.sdover.hotelapi.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sdover.hotelapi.model.EstadoPago;
 import com.sdover.hotelapi.model.EstadoReserva;
 import com.sdover.hotelapi.model.TipoHabitacion;
 
@@ -19,18 +21,19 @@ public class ReservaResponse {
     private LocalDateTime fechaCreacion;
 
     private LocalDate fechaEntrada;
-
     private LocalDate fechaSalida;
-
     private EstadoReserva estadoReserva;
-
     private Long clienteId;
-
     private String clienteDni;
-
     private Integer numPax;
-
     private Double precioTotal;
+    private Double importePagado;
+    private EstadoPago estadoPago;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime fechaHoraCheckin;
+
+    private List<AcompananteResponse> acompanantes;
 
     public ReservaResponse() {
     }
@@ -46,7 +49,11 @@ public class ReservaResponse {
             Long clienteId,
             String clienteDni,
             Integer numPax,
-            Double precioTotal
+            Double precioTotal,
+            Double importePagado,
+            EstadoPago estadoPago,
+            LocalDateTime fechaHoraCheckin,
+            List<AcompananteResponse> acompanantes
         ) {
 
         this.id = id;
@@ -60,6 +67,10 @@ public class ReservaResponse {
         this.clienteDni = clienteDni;
         this.numPax = numPax;
         this.precioTotal = precioTotal;
+        this.importePagado = importePagado;
+        this.estadoPago = estadoPago;
+        this.fechaHoraCheckin = fechaHoraCheckin;
+        this.acompanantes = acompanantes;
     }
 
     public Long getId() {
@@ -149,4 +160,37 @@ public class ReservaResponse {
     public void setNumPax(Integer numPax) {
         this.numPax = numPax;
     }
+
+    public LocalDateTime getFechaHoraCheckin() {
+        return fechaHoraCheckin;
+    }
+
+    public void setFechaHoraCheckin(LocalDateTime fechaHoraCheckin) {
+        this.fechaHoraCheckin = fechaHoraCheckin;
+    }
+
+    public Double getImportePagado() {
+        return importePagado;
+    }
+
+    public void setImportePagado(Double importePagado) {
+        this.importePagado = importePagado;
+    }
+
+    public EstadoPago getEstadoPago() {
+        return estadoPago;
+    }
+
+    public void setEstadoPago(EstadoPago estadoPago) {
+        this.estadoPago = estadoPago;
+    }
+
+    public List<AcompananteResponse> getAcompanantes() {
+        return acompanantes;
+    }
+
+    public void setAcompanantes(List<AcompananteResponse> acompanantes) {
+        this.acompanantes = acompanantes;
+    }
+
 }

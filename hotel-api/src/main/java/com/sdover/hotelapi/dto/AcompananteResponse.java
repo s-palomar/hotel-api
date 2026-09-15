@@ -1,62 +1,33 @@
-package com.sdover.hotelapi.model;
+package com.sdover.hotelapi.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+public class AcompananteResponse {
 
-@Entity
-public class Acompanante {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
     private String dni;
-
-    @NotBlank
     private String nombre;
-
-    @NotBlank
     private String apellidos;
-
-    @Email
-    @NotBlank
     private String email;
-
-    @NotBlank
     private String telefono;
-
-    @NotBlank
     private String nacionalidad;
 
-    @ManyToOne
-    @JoinColumn(name = "reserva_id")
-    private Reserva reserva;
+    public AcompananteResponse() {}    
 
-    public Acompanante() {}
-
-    public Acompanante(
+    public AcompananteResponse (
         Long id,
         String dni,
         String nombre,
         String apellidos,
         String email,
         String telefono,
-        String nacionalidad,
-        Reserva reserva
+        String nacionalidad
         ) {
             this.id = id;
             this.dni = dni;
             this.nombre = nombre;
             this.apellidos = apellidos;
+            this.email = email;
             this.telefono = telefono;
             this.nacionalidad = nacionalidad;
-            this.reserva = reserva;
     }
 
     public Long getId() {
@@ -113,14 +84,5 @@ public class Acompanante {
 
     public void setNacionalidad(String nacionalidad) {
         this.nacionalidad = nacionalidad;
-    }      
-
-    public Reserva getReserva() {
-        return reserva;
     }
-
-    public void setReserva(Reserva reserva) {
-        this.reserva = reserva;
-    }
-
 }

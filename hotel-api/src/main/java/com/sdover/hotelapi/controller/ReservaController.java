@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sdover.hotelapi.dto.CheckinRequest;
+import com.sdover.hotelapi.dto.PagoRequest;
 import com.sdover.hotelapi.dto.ReservaRequest;
 import com.sdover.hotelapi.dto.ReservaResponse;
 import com.sdover.hotelapi.dto.ReservaUpdateRequest;
@@ -110,13 +111,24 @@ public class ReservaController {
         return ResponseEntity.ok(reservaActualizada);
     }
 
-    // PATCH /api/reservas/{id}
+    // PATCH /api/reservas/{id}/checkin
     @PatchMapping("/{id}/checkin")
     public ResponseEntity<ReservaResponse> hacerCheckin(
             @PathVariable Long id,
             @RequestBody CheckinRequest request) {
 
         ReservaResponse reserva = reservaService.hacerCheckin(id, request);
+
+        return ResponseEntity.ok(reserva);
+    }
+
+
+    @PostMapping("/{id}/pagos")
+    public ResponseEntity<ReservaResponse> registrarPago(
+            @PathVariable Long id,
+            @RequestBody PagoRequest request) {
+
+        ReservaResponse reserva = reservaService.registrarPago(id, request);
 
         return ResponseEntity.ok(reserva);
     }

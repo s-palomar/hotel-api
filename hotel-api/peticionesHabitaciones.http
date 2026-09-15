@@ -60,13 +60,13 @@ Content-Type: application/json
     "tipoHabitacion": "DOBLE"
 }
 
-### Crear habitación doble en hotel 3
-POST http://localhost:8080/api/habitaciones/hotel/3
+### Crear habitación doble en hotel 23
+POST http://localhost:8080/api/habitaciones/hotel/23
 Content-Type: application/json
 
 {
-    "numero": "103",
-    "precioBase": 120.0,
+    "numero": "303",
+    "precioBase": 220.0,
     "tipoHabitacion": "DOBLE"
 }
 
@@ -127,8 +127,8 @@ POST http://localhost:8080/api/habitaciones/hotel/23
 Content-Type: application/json
 
 {
-    "numero": "100",
-    "precioBase": 510.0,
+    "numero": "702",
+    "precioBase": 310.0,
     "tipoHabitacion": "DOBLE",
     "maxPax": 2
 }
@@ -177,12 +177,14 @@ GET http://localhost:8080/api/habitaciones/1
 GET http://localhost:8080/api/habitaciones/999
 
 ### Actualizar habitación
-PUT http://localhost:8080/api/habitaciones/1
+PUT http://localhost:8080/api/habitaciones/32
 Content-Type: application/json
 
 {
-    "numero": "101A",
-    "precioBase": 115
+    "numero": "201",
+    "precioBase": "790",
+    "tipoHabitacion": "SUITE",
+    "maxPax": 3
 }
 
 ### Eliminar habitación

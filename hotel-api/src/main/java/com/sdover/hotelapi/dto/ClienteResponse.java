@@ -99,6 +99,4 @@ public class ClienteResponse {
         this.formaPago = formaPago;
     }
 
-
-
 }

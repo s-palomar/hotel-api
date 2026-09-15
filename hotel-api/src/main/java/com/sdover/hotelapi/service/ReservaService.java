@@ -3,34 +3,51 @@ package com.sdover.hotelapi.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.sdover.hotelapi.HotelApiApplication;
+import com.sdover.hotelapi.controller.AcompananteController;
+import com.sdover.hotelapi.controller.ClienteController;
+import com.sdover.hotelapi.dto.AcompananteRequest;
+import com.sdover.hotelapi.dto.AcompananteResponse;
 import com.sdover.hotelapi.dto.CheckinRequest;
+import com.sdover.hotelapi.dto.PagoRequest;
 import com.sdover.hotelapi.dto.ReservaRequest;
 import com.sdover.hotelapi.dto.ReservaResponse;
 import com.sdover.hotelapi.dto.ReservaUpdateRequest;
+import com.sdover.hotelapi.exception.CapacidadHabitacionExcedidaException;
+import com.sdover.hotelapi.exception.CheckinFueraDeFechaException;
+import com.sdover.hotelapi.exception.ClienteNoCoincideException;
 import com.sdover.hotelapi.exception.ClienteNoEncontradoException;
 import com.sdover.hotelapi.exception.FechasReservaIncompletasException;
 import com.sdover.hotelapi.exception.FechasReservaInvalidasException;
 import com.sdover.hotelapi.exception.HabitacionNoDisponibleException;
 import com.sdover.hotelapi.exception.HabitacionNoEncontradaException;
 import com.sdover.hotelapi.exception.HotelNoEncontradoException;
+import com.sdover.hotelapi.exception.ImporteIncorrectoException;
+import com.sdover.hotelapi.exception.NumPaxNoCoincideException;
+import com.sdover.hotelapi.exception.ReservaCanceladaException;
 import com.sdover.hotelapi.exception.ReservaNoCancelableException;
+import com.sdover.hotelapi.exception.ReservaNoConfirmadaException;
 import com.sdover.hotelapi.exception.ReservaNoEncontradaException;
 import com.sdover.hotelapi.exception.ReservaNoModificableException;
 import com.sdover.hotelapi.exception.ReservaNoPendienteException;
 import com.sdover.hotelapi.exception.ReservaUpdateVaciaException;
-import com.sdover.hotelapi.exception.CapacidadHabitacionExcedidaException;
+import com.sdover.hotelapi.exception.ReservaYaOcupadaException;
+import com.sdover.hotelapi.model.Acompanante;
 import com.sdover.hotelapi.model.Cliente;
+import com.sdover.hotelapi.model.EstadoPago;
 import com.sdover.hotelapi.model.EstadoReserva;
 import com.sdover.hotelapi.model.Habitacion;
 import com.sdover.hotelapi.model.Hotel;
 import com.sdover.hotelapi.model.Reserva;
 import com.sdover.hotelapi.model.TipoHabitacion;
+import com.sdover.hotelapi.repository.AcompananteRepository;
 import com.sdover.hotelapi.repository.ClienteRepository;
 import com.sdover.hotelapi.repository.HabitacionRepository;
 import com.sdover.hotelapi.repository.HotelRepository;
@@ -39,18 +56,22 @@ import com.sdover.hotelapi.repository.ReservaRepository;
 @Service
 public class ReservaService {
 
+    private final AcompananteService acompananteService;
+    private final AcompananteController acompananteController;
+    private final ClienteController clienteController;
     private final ClienteService clienteService;
     private final HotelApiApplication hotelApiApplication;
     private final ReservaRepository reservaRepository;
     private final HabitacionRepository habitacionRepository;
     private final HotelRepository hotelRepository;
     private final ClienteRepository clienteRepository;
+    private final AcompananteRepository acompananteRepository;
 
     public ReservaService (
         ReservaRepository reservaRepository,
         HabitacionRepository habitacionRepository,
         HotelRepository hotelRepository,
-        ClienteRepository clienteRepository, HotelApiApplication hotelApiApplication, ClienteService clienteService
+        ClienteRepository clienteRepository, HotelApiApplication hotelApiApplication, ClienteService clienteService, ClienteController clienteController, AcompananteRepository acompananteRepository, AcompananteController acompananteController, AcompananteService acompananteService
     ) {
         this.reservaRepository = reservaRepository;
         this.habitacionRepository = habitacionRepository;
@@ -58,6 +79,10 @@ public class ReservaService {
         this.clienteRepository = clienteRepository;
         this.hotelApiApplication = hotelApiApplication;
         this.clienteService = clienteService;
+        this.clienteController = clienteController;
+        this.acompananteRepository = acompananteRepository;
+        this.acompananteController = acompananteController;
+        this.acompananteService = acompananteService;
     }
 
     public ReservaResponse crearReserva(ReservaRequest request) {
@@ -138,6 +163,8 @@ public class ReservaService {
                 reserva.setFechaEntrada(fechaEntrada);
                 reserva.setFechaSalida(fechaSalida);
                 reserva.setPrecioTotal(precioTotal);
+                reserva.setImportePagado(0.0);
+                reserva.setEstadoPago(EstadoPago.PENDIENTE);
                 reserva.setCliente(cliente);
                 reserva.setNumPax(numPax);
                 reserva.setEstadoReserva(EstadoReserva.PENDIENTE);
@@ -458,16 +485,16 @@ public class ReservaService {
                                 || request.getFechaEntrada() != null
                                 || request.getFechaSalida() != null) {
 
-                        LocalDateTime fechaLimite = reserva.getFechaEntrada()
-                                .atTime(15, 0)
-                                .minusHours(48);
+                                LocalDateTime fechaLimite = reserva.getFechaEntrada()
+                                        .atTime(15, 0)
+                                        .minusHours(48);
 
-                        if (LocalDateTime.now().isAfter(fechaLimite)) {
-                                throw new ReservaNoModificableException(
-                                        "La reserva con id " + id
-                                        + " no puede modificarse porque faltan menos de 48 horas "
-                                        + "para la fecha de entrada.");
-                        }
+                                if (LocalDateTime.now().isAfter(fechaLimite)) {
+                                        throw new ReservaNoModificableException(
+                                                "La reserva con id " + id
+                                                + " no puede modificarse porque faltan menos de 48 horas "
+                                                + "para la fecha de entrada.");
+                                }
                         }
 
                         // Buscar una habitación disponible
@@ -572,8 +599,167 @@ public class ReservaService {
         return precioTotal;
     }
 
+    public ReservaResponse hacerCheckin(Long id, CheckinRequest request) {
+
+        // Buscar la reserva y comprobar que existe
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(() ->
+                        new ReservaNoEncontradaException(
+                                "No existe reserva con id " + id));
+
+        // Comprobar que está confirmada
+        if (reserva.getEstadoReserva() == EstadoReserva.OCUPADA) {
+                throw new ReservaYaOcupadaException(
+                        "El check-in ya se ha realizado para esta reserva");
+        }
+
+        if (reserva.getEstadoReserva() == EstadoReserva.CANCELADA) {
+                throw new ReservaCanceladaException(
+                        "No se puede hacer el check-in de una reserva cancelada");
+        }
+
+        if (reserva.getEstadoReserva() != EstadoReserva.CONFIRMADA) {
+                throw new ReservaNoConfirmadaException(
+                        "Confirmar la reserva antes de hacer el check-in");
+        }
+                
+        // Comprobar fecha de entrada
+        LocalDate hoy = LocalDate.now();
+
+        if (hoy.isBefore(reserva.getFechaEntrada()) || !hoy.isBefore(reserva.getFechaSalida())) {
+                throw new CheckinFueraDeFechaException(
+                                "El check-in solo puede realizarse entre la fecha de entrada y la fecha de salida de la reserva");
+        }
+
+        // Comprobar DNI del titular
+        if (!request.getClienteDni().equals(reserva.getCliente().getDni())) {
+                throw new ClienteNoCoincideException("El DNI introducido no coincide con el DNI de la reserva");
+        }
+
+        // Comprobar total huéspedes
+        int totalPax = request.getAcompanantes().size() + 1;
+        if (totalPax != reserva.getNumPax()) {
+                throw new NumPaxNoCoincideException("El nº de huéspedes no coincide con el de la reserva");
+        }
+
+        // Comprobar capacidad habitación
+        if(totalPax > reserva.getHabitacion().getMaxPax()) {
+                throw new CapacidadHabitacionExcedidaException ("El total de huéspedes excede el máximo de ocupantes para esta habitación");
+        }
+
+        List<Acompanante> acompanantes = new ArrayList<>();
+
+        // Procesar acompañantes
+        for (AcompananteRequest acompananteRequest : request.getAcompanantes()) {
+    
+                String dni = acompananteRequest.getDni();
+
+                Optional<Cliente> clienteExistente = clienteRepository.findByDni(dni);
+
+                if (clienteExistente.isPresent()) {
+
+                        Cliente cliente = clienteExistente.get();
+                        // usamos los datos actuales del Cliente
+                        Acompanante acompanante = new Acompanante();
+
+                        acompanante.setDni(cliente.getDni());
+                        acompanante.setNombre(cliente.getNombre());
+                        acompanante.setApellidos(cliente.getApellidos());
+                        acompanante.setEmail(cliente.getEmail());
+                        acompanante.setTelefono(cliente.getTelefono());
+                        acompanante.setNacionalidad(cliente.getNacionalidad());
+                        acompanante.setReserva(reserva);
+
+                        acompanantes.add(acompanante);
+
+                } else {
+
+                        Optional<Acompanante> acompananteExistente = acompananteRepository.findByDni(dni);
+
+                        if (acompananteExistente.isPresent()) {
+
+                                Acompanante acompananteEncontrado = acompananteExistente.get();
+                                // usamos los datos que ya conocemos del Acompanante
+                                Acompanante acompanante = new Acompanante();
+
+                                acompanante.setDni(acompananteEncontrado.getDni());
+                                acompanante.setNombre(acompananteEncontrado.getNombre());
+                                acompanante.setApellidos(acompananteEncontrado.getApellidos());
+                                acompanante.setEmail(acompananteEncontrado.getEmail());
+                                acompanante.setTelefono(acompananteEncontrado.getTelefono());
+                                acompanante.setNacionalidad(acompananteEncontrado.getNacionalidad());
+                                acompanante.setReserva(reserva);
+
+                                acompanantes.add(acompanante);                        
+
+                        } else {
+
+                        // creamos un Acompanante con los datos del request
+                        Acompanante acompanante = new Acompanante();
+
+                        acompanante.setDni(acompananteRequest.getDni());
+                        acompanante.setNombre(acompananteRequest.getNombre());
+                        acompanante.setApellidos(acompananteRequest.getApellidos());
+                        acompanante.setEmail(acompananteRequest.getEmail());
+                        acompanante.setTelefono(acompananteRequest.getTelefono());
+                        acompanante.setNacionalidad(acompananteRequest.getNacionalidad());
+                        acompanante.setReserva(reserva);
+
+                        acompanantes.add(acompanante);    
+                        }
+                }
+        }
+
+        reserva.setAcompanantes(acompanantes);
+        reserva.setFechaHoraCheckin(LocalDateTime.now());
+        reserva.setEstadoReserva(EstadoReserva.OCUPADA); 
+
+        reservaRepository.save(reserva);
+
+        return convertirAResponse(reserva);
+    }
+
+    public ReservaResponse registrarPago(Long id, PagoRequest request) {
+
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(() ->
+                        new ReservaNoEncontradaException(
+                                "No existe reserva con id " + id));
+
+        // Comprobar que el importe recibido es válido
+        if(request.getImporte() <= 0) {
+                throw new ImporteIncorrectoException("El importe debe ser mayor que 0.");
+        }
+
+        // Comprobar que el nuevo pago no hace que importePagado supere precioTotal
+        if((request.getImporte() + reserva.getImportePagado()) > reserva.getPrecioTotal()) {
+                throw new ImporteIncorrectoException("El importe pagado supera el precio total.");
+        }
+
+        // Sumar el pago a importePagado
+        reserva.setImportePagado(reserva.getImportePagado() + request.getImporte());
+
+        // Asignar estado pago 
+        if(reserva.getImportePagado() == 0) {
+                reserva.setEstadoPago(EstadoPago.PENDIENTE);
+        } else if(reserva.getImportePagado() < reserva.getPrecioTotal()) {
+                reserva.setEstadoPago(EstadoPago.PARCIAL);
+        } else {
+                reserva.setEstadoPago(EstadoPago.COMPLETADO);
+        }
+
+        reservaRepository.save(reserva);
+
+        return convertirAResponse(reserva);
+    }
+
     // Convertir Reserva -> ReservaResponse
     private ReservaResponse convertirAResponse(Reserva reserva) {
+
+        List<AcompananteResponse> acompanantes = reserva.getAcompanantes()
+                .stream()
+                .map(this::convertirAcompananteResponse)
+                .toList();
 
         return new ReservaResponse(
                 reserva.getId(),
@@ -586,10 +772,28 @@ public class ReservaService {
                 reserva.getCliente().getId(),
                 reserva.getCliente().getDni(),
                 reserva.getNumPax(),
-                reserva.getPrecioTotal()
+                reserva.getPrecioTotal(),
+                reserva.getImportePagado(),
+                reserva.getEstadoPago(),
+                reserva.getFechaHoraCheckin(),
+                acompanantes                
         );
     }
 
+    private AcompananteResponse convertirAcompananteResponse(
+        Acompanante acompanante) {
+
+        return new AcompananteResponse(
+                acompanante.getId(),
+                acompanante.getDni(),
+                acompanante.getNombre(),
+                acompanante.getApellidos(),
+                acompanante.getEmail(),
+                acompanante.getTelefono(),
+                acompanante.getNacionalidad()
+        );
+    }
+    
     public void probarDisponibilidad() {
 
         List<Habitacion> habitacionesDisponibles =
@@ -603,18 +807,4 @@ public class ReservaService {
 
         System.out.println("Habitaciones disponibles: " + habitacionesDisponibles);
     }
-
-    public ReservaResponse hacerCheckin(Long id, CheckinRequest request) {
-
-        Reserva reserva = reservaRepository.findById(id)
-                .orElseThrow(() ->
-                        new ReservaNoEncontradaException(
-                                "No existe reserva con id " + id));
-
-        // Aquí iremos añadiendo las comprobaciones del check-in
-
-
-        return convertirAResponse(reserva);
-    }
-
 }

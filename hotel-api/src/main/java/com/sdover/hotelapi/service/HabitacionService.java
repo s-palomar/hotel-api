@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.sdover.hotelapi.dto.HabitacionRequest;
 import com.sdover.hotelapi.dto.HabitacionResponse;
+import com.sdover.hotelapi.dto.HabitacionUpdateRequest;
 import com.sdover.hotelapi.exception.HabitacionNoEncontradaException;
 import com.sdover.hotelapi.exception.HabitacionYaExisteException;
 import com.sdover.hotelapi.exception.HotelNoEncontradoException;
@@ -78,14 +79,16 @@ public class HabitacionService {
         return convertirAResponse(habitacion);
     }   
     
-    public HabitacionResponse actualizarHabitacion(Long id, HabitacionRequest request) {
+    public HabitacionResponse actualizarHabitacion(Long id, HabitacionUpdateRequest request) {
 
         Habitacion habitacion = habitacionRepository.findById(id)
-            .orElseThrow(() -> new HabitacionNoEncontradaException("No existe habitación con id " + id));
-        
+            .orElseThrow(() -> new HabitacionNoEncontradaException(
+                "No existe habitación con id " + id));
+
         habitacion.setTipoHabitacion(request.getTipoHabitacion());
         habitacion.setNumero(request.getNumero());
         habitacion.setPrecioBase(request.getPrecioBase());
+        habitacion.setMaxPax(request.getMaxPax());
 
         Habitacion habitacionActualizada = habitacionRepository.save(habitacion);
 
