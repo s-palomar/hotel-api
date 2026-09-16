@@ -122,7 +122,7 @@ public class ReservaController {
         return ResponseEntity.ok(reserva);
     }
 
-
+    // POST  http://localhost:8080/api/reservas/{id}/pagos
     @PostMapping("/{id}/pagos")
     public ResponseEntity<ReservaResponse> registrarPago(
             @PathVariable Long id,
@@ -133,9 +133,29 @@ public class ReservaController {
         return ResponseEntity.ok(reserva);
     }
 
-    // Para probar reserva con solapamiento de fechas
+    // PUT http://localhost:8080/api/reservas/{id}/checkout
+    @PutMapping("/{id}/checkout")
+    public ResponseEntity<ReservaResponse> hacerCheckout(
+            @PathVariable Long id) {
+
+        ReservaResponse reserva = reservaService.hacerCheckout(id);
+
+        return ResponseEntity.ok(reserva);
+    }
+
+    // Probar reserva con solapamiento de fechas
     @GetMapping("/probar-disponibilidad")
     public void probarDisponibilidad() {
         reservaService.probarDisponibilidad();
     }
+
+    // Probar finalización automática reserva
+    @GetMapping("/probar-finalizacion")
+    public ResponseEntity<String> probarFinalizacion() {
+
+        reservaService.finalizarReservasPorFechaSalida();
+
+        return ResponseEntity.ok("Proceso de finalización ejecutado");
+    }
+    
 }

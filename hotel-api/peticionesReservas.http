@@ -71,21 +71,21 @@ Content-Type: application/json
     "numPax": 2
 }
 
-### Crear reserva con num pax en hotel 23
+### Crear reserva con num pax en hotel 22
 POST http://localhost:8080/api/reservas
 Content-Type: application/json
 
 {
-    "hotelId": 23,
-    "tipoHabitacion": "SUITE",
-    "fechaEntrada": "2026-09-24",
-    "fechaSalida": "2026-09-26",
+    "hotelId": 22,
+    "tipoHabitacion": "DOBLE",
+    "fechaEntrada": "2026-09-19",
+    "fechaSalida": "2026-09-22",
     "clienteId": 1,
     "numPax": 2
 }
 
 ### Confirmar reserva PENDIENTE 
-PUT http://localhost:8080/api/reservas/42/confirmar
+PUT http://localhost:8080/api/reservas/49/confirmar
 
 ### Reserva ya CANCELADA
 PUT http://localhost:8080/api/reservas/13/confirmar
@@ -100,10 +100,10 @@ GET http://localhost:8080/api/reservas
 ###
 
 ### Obtener todas las habitaciones del hotel 23
-GET http://localhost:8080/api/habitaciones/hotel/23
+GET http://localhost:8080/api/habitaciones/hotel/22
 
 ### Obtener reserva por id reserva
-GET http://localhost:8080/api/reservas/41
+GET http://localhost:8080/api/reservas/46
 
 ###
 
@@ -130,7 +130,7 @@ GET http://localhost:8080/api/reservas/probar-disponibilidad
 ###############################################################
 
 ### Cancelar reserva
-DELETE http://localhost:8080/api/reservas/30
+DELETE http://localhost:8080/api/reservas/35
 
 ###
 
@@ -223,7 +223,7 @@ GET http://localhost:8080/api/reservas/999
 ###
 
 ### Confirmar una reserva PENDIENTE
-PUT http://localhost:8080/api/reservas/44/confirmar
+PUT http://localhost:8080/api/reservas/46/confirmar
 
 ### Confirmar una reserva CONFIRMADA
 PUT http://localhost:8080/api/reservas/7/confirmar
@@ -337,16 +337,15 @@ PUT http://localhost:8080/api/reservas/9999/cancelar
 
 
 ### Actualizar fechas reserva pendiente
-PATCH http://localhost:8080/api/reservas/38
+PATCH http://localhost:8080/api/reservas/40
 Content-Type: application/json
 
 {
-  "fechaEntrada": "2026-09-13",
-  "fechaSalida": "2026-09-15"
+  "fechaSalida": "2026-09-16"
 }
 
 ### Actualizar tipo habitación reserva pendiente
-PATCH http://localhost:8080/api/reservas/26
+PATCH http://localhost:8080/api/reservas/40
 Content-Type: application/json
 
 {
@@ -370,21 +369,22 @@ Content-Type: application/json
 }
 
 ### Actualizar fechas reserva confirmada >48h
-PATCH http://localhost:8080/api/reservas/42
+PATCH http://localhost:8080/api/reservas/35
 Content-Type: application/json
 
 {
-  "fechaEntrada": "2026-09-14",
-  "fechaSalida": "2026-10-16"
+  "fechaEntrada": "2026-09-10",
+  "fechaSalida": "2026-09-14"
 }
 
 ### Actualizar fechas reserva confirmada <48h
-PATCH http://localhost:8080/api/reservas/ID
+PATCH http://localhost:8080/api/reservas/35
 Content-Type: application/json
 
 {
-  "fechaEntrada": "2026-08-23",
-  "fechaSalida": "2026-08-25"
+  "fechaEntrada": "2026-09-10",
+  "fechaSalida": "2026-09-14",
+  "numPax": 4
 }
 
 ### Actualizar hotel reserva confirmada <48h
@@ -411,6 +411,14 @@ Content-Type: application/json
   "clienteId": 3
 }
 
+### Actualizar fecha salida reserva OCUPADA
+PATCH http://localhost:8080/api/reservas/47
+Content-Type: application/json
+
+{
+  "fechaSalida": "2026-09-14"
+}
+
 ### Error validación: Request vacío
 PATCH http://localhost:8080/api/reservas/17
 Content-Type: application/json
@@ -434,11 +442,11 @@ Content-Type: application/json
 }
 
 ### Actualizar numPax de reserva
-PATCH http://localhost:8080/api/reservas/31
+PATCH http://localhost:8080/api/reservas/35
 Content-Type: application/json
 
 {
-  "numPax": 5
+  "numPax": 3
 }
 
 ### Actualizar numPax de reserva
@@ -505,7 +513,7 @@ Content-Type: application/json
 }
 
 ### Probar checkin RESERVA 
-PATCH http://localhost:8080/api/reservas/34/checkin
+PATCH http://localhost:8080/api/reservas/47/checkin
 Content-Type: application/json
 
 {
@@ -524,7 +532,7 @@ Content-Type: application/json
 }
 
 ### Checkin con acompañanante existente
-PATCH http://localhost:8080/api/reservas/36/checkin
+PATCH http://localhost:8080/api/reservas/46/checkin
 Content-Type: application/json
 
 {
@@ -543,11 +551,11 @@ Content-Type: application/json
 }
 
 ### Realizar pago inicial de reserva
-POST http://localhost:8080/api/reservas/37/pagos
+POST http://localhost:8080/api/reservas/49/pagos
 Content-Type: application/json
 
 {
-  "importe": 10.0
+  "importe": 300.0
 }
 
 ### Completar pago de reserva
@@ -563,12 +571,18 @@ GET http://localhost:8080/api/acompanantes/reserva/40
 Content-Type: application/json
 
 ### Hacer pago reserva pendiente <50%
-POST http://localhost:8080/api/reservas/30/pagos
+POST http://localhost:8080/api/reservas/40/pagos
 Content-Type: application/json
 
 {
-  "importe": 1000.0
+  "importe": 510.0
 }
 
-### Intentar confirmar reserva pago <50%
-PUT http://localhost:8080/api/reservas/43/confirmar
+### confirmar reserva 
+PUT http://localhost:8080/api/reservas/46/confirmar
+
+### Hacer checkout reserva pagada
+PUT http://localhost:8080/api/reservas/43/checkout
+
+### Probar finalizacion Scheduler
+GET http://localhost:8080/api/reservas/probar-finalizacion

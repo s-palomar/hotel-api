@@ -27,6 +27,7 @@ public class Reserva {
     private LocalDate fechaEntrada;
     private LocalDate fechaSalida;
     private LocalDateTime fechaHoraCheckin;
+    private LocalDateTime fechaHoraCheckout;
     private Integer numPax;
     private Double precioTotal;
     private Double importePagado;
@@ -56,6 +57,7 @@ public class Reserva {
         LocalDate fechaEntrada,
         LocalDate fechaSalida,
         LocalDateTime fechaHoraCheckin,
+        LocalDateTime fechaHoraCheckout,
         Integer numPax,
         Double precioTotal,
         Double importePagado,
@@ -71,6 +73,7 @@ public class Reserva {
         this.fechaEntrada = fechaEntrada;
         this.fechaSalida = fechaSalida;
         this.fechaHoraCheckin = fechaHoraCheckin;
+        this.fechaHoraCheckout = fechaHoraCheckout;
         this.numPax = numPax;
         this.precioTotal = precioTotal;
         this.importePagado = importePagado;
@@ -185,6 +188,13 @@ public class Reserva {
         this.estadoPago = estadoPago;
     }
 
+    public LocalDateTime getFechaHoraCheckout() {
+        return fechaHoraCheckout;
+    }
 
+    public void setFechaHoraCheckout(LocalDateTime fechaHoraCheckout) {
+        this.fechaHoraCheckout = fechaHoraCheckout;
+    }
 
+    
 }

@@ -39,4 +39,20 @@ public interface HabitacionRepository extends JpaRepository<Habitacion, Long> {
         @Param("fechaEntrada") LocalDate fechaEntrada,
         @Param("fechaSalida") LocalDate fechaSalida,
         @Param("reservaId") Long reservaId);
+        
+
+    @Query("""
+        SELECT CASE WHEN COUNT(r) = 0 THEN true ELSE false END
+        FROM Reserva r
+        WHERE r.habitacion.id = :habitacionId
+        AND r.id <> :reservaId
+        AND r.estadoReserva <> com.sdover.hotelapi.model.EstadoReserva.CANCELADA
+        AND r.fechaEntrada < :fechaSalida
+        AND r.fechaSalida > :fechaEntrada
+        """)
+    boolean habitacionDisponible(
+        @Param("habitacionId") Long habitacionId,
+        @Param("fechaEntrada") LocalDate fechaEntrada,
+        @Param("fechaSalida") LocalDate fechaSalida,
+        @Param("reservaId") Long reservaId);
 }

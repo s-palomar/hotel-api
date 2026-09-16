@@ -25,6 +25,8 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
         List<Reserva> findByEstadoReservaAndFechaCreacionBefore(EstadoReserva estadoReserva, LocalDateTime fecha);
 
+        List<Reserva> findByFechaSalidaAndEstadoReservaIn(LocalDate fechaSalida, List<EstadoReserva> estados);
+
         @Query("""
                 SELECT COUNT(r) > 0
                 FROM Reserva r

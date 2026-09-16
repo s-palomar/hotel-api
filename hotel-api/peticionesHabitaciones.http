@@ -60,13 +60,13 @@ Content-Type: application/json
     "tipoHabitacion": "DOBLE"
 }
 
-### Crear habitación doble en hotel 23
-POST http://localhost:8080/api/habitaciones/hotel/23
+### Crear habitación doble en hotel 22
+POST http://localhost:8080/api/habitaciones/hotel/22
 Content-Type: application/json
 
 {
-    "numero": "303",
-    "precioBase": 220.0,
+    "numero": "300",
+    "precioBase": 200.0,
     "tipoHabitacion": "DOBLE"
 }
 
@@ -112,14 +112,14 @@ Content-Type: application/json
 
 
 ### Crear habitación con max pax
-POST http://localhost:8080/api/habitaciones/hotel/4
+POST http://localhost:8080/api/habitaciones/hotel/22
 Content-Type: application/json
 
 {
-    "numero": "203",
-    "precioBase": 180.0,
+    "numero": "201",
+    "precioBase": 200.0,
     "tipoHabitacion": "DOBLE",
-    "maxPax": 2
+    "maxPax": 3
 }
 
 ### Crear habitación doble en hotel 23

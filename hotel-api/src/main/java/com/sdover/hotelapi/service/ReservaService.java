@@ -16,6 +16,7 @@ import com.sdover.hotelapi.controller.ClienteController;
 import com.sdover.hotelapi.dto.AcompananteRequest;
 import com.sdover.hotelapi.dto.AcompananteResponse;
 import com.sdover.hotelapi.dto.CheckinRequest;
+import com.sdover.hotelapi.dto.HabitacionResponse;
 import com.sdover.hotelapi.dto.PagoRequest;
 import com.sdover.hotelapi.dto.ReservaRequest;
 import com.sdover.hotelapi.dto.ReservaResponse;
@@ -24,6 +25,7 @@ import com.sdover.hotelapi.exception.CapacidadHabitacionExcedidaException;
 import com.sdover.hotelapi.exception.CheckinFueraDeFechaException;
 import com.sdover.hotelapi.exception.ClienteNoCoincideException;
 import com.sdover.hotelapi.exception.ClienteNoEncontradoException;
+import com.sdover.hotelapi.exception.FechaReservaInvalidaException;
 import com.sdover.hotelapi.exception.FechasReservaIncompletasException;
 import com.sdover.hotelapi.exception.FechasReservaInvalidasException;
 import com.sdover.hotelapi.exception.HabitacionNoDisponibleException;
@@ -31,11 +33,13 @@ import com.sdover.hotelapi.exception.HabitacionNoEncontradaException;
 import com.sdover.hotelapi.exception.HotelNoEncontradoException;
 import com.sdover.hotelapi.exception.ImporteIncorrectoException;
 import com.sdover.hotelapi.exception.NumPaxNoCoincideException;
+import com.sdover.hotelapi.exception.PagoPendienteException;
 import com.sdover.hotelapi.exception.ReservaCanceladaException;
 import com.sdover.hotelapi.exception.ReservaNoCancelableException;
 import com.sdover.hotelapi.exception.ReservaNoConfirmadaException;
 import com.sdover.hotelapi.exception.ReservaNoEncontradaException;
 import com.sdover.hotelapi.exception.ReservaNoModificableException;
+import com.sdover.hotelapi.exception.ReservaNoOcupadaException;
 import com.sdover.hotelapi.exception.ReservaNoPendienteException;
 import com.sdover.hotelapi.exception.ReservaUpdateVaciaException;
 import com.sdover.hotelapi.exception.ReservaYaOcupadaException;
@@ -367,19 +371,19 @@ public class ReservaService {
                     "No se ha indicado ningún dato para modificar la reserva.");
         }
 
-        if ((request.getFechaEntrada() == null
+        if (reserva.getEstadoReserva() != EstadoReserva.OCUPADA
+                && ((request.getFechaEntrada() == null
                 && request.getFechaSalida() != null)
                 || (request.getFechaEntrada() != null
-                && request.getFechaSalida() == null)) {
+                && request.getFechaSalida() == null))) {
 
-            throw new FechasReservaIncompletasException(
-                    "Para modificar las fechas de una reserva deben indicarse "
-                    + "la fecha de entrada y la fecha de salida.");
+                throw new FechasReservaIncompletasException(
+                        "Para modificar fechas se debe incluir tanto la de entrada como la de salida.");
         }
 
         Integer numPaxFinal = request.getNumPax() != null
-        ? request.getNumPax()
-        : reserva.getNumPax();
+                ? request.getNumPax()
+                : reserva.getNumPax();
 
         if (reserva.getEstadoReserva() == EstadoReserva.PENDIENTE) {
 
@@ -572,6 +576,111 @@ public class ReservaService {
 
                 return convertirAResponse(reserva);
                 
+        } else if (reserva.getEstadoReserva() == EstadoReserva.OCUPADA) {
+
+                if (request.getFechaEntrada() != null) {
+
+                        throw new ReservaNoModificableException(
+                                "No se puede modificar la fecha de entrada de una reserva OCUPADA.");
+                }
+
+                LocalDate fechaEntradaFinal = reserva.getFechaEntrada();
+
+                LocalDate fechaSalidaFinal = request.getFechaSalida() != null
+                        ? request.getFechaSalida()
+                        : reserva.getFechaSalida();
+
+                // Comprobar que la fecha de salida no es anterior a la fecha de entrada
+                if (request.getFechaSalida() != null
+                        && !fechaSalidaFinal.isAfter(fechaEntradaFinal)) {
+
+                        throw new FechaReservaInvalidaException(
+                        "La fecha de salida debe ser posterior a la fecha de entrada.");
+                }
+
+                // Comprobar capacidad con la habitación actual
+                if (numPaxFinal > reserva.getHabitacion().getMaxPax()) {
+
+                        throw new CapacidadHabitacionExcedidaException(
+                                "La habitación " + reserva.getHabitacion().getNumero()
+                                + " admite un máximo de "
+                                + reserva.getHabitacion().getMaxPax()
+                                + " huéspedes.");
+                }
+
+                if (request.getFechaSalida() != null
+                        && !request.getFechaSalida().equals(reserva.getFechaSalida())) {
+
+                        // Alargamos salida: Comprobar disponibilidad, recalcular precio
+                        if (request.getFechaSalida().isAfter(reserva.getFechaSalida())) {
+
+                                boolean disponible = habitacionDisponible(
+                                        reserva.getHabitacion().getId(),
+                                        fechaEntradaFinal,
+                                        fechaSalidaFinal,
+                                        reserva.getId());
+
+                                Habitacion habitacionFinal;
+
+                                if (disponible) {
+
+                                        habitacionFinal = reserva.getHabitacion();
+
+                                } else {
+
+                                        habitacionFinal = buscarHabitacionDisponible(
+                                                reserva.getHabitacion().getHotel().getId(),
+                                                reserva.getHabitacion().getTipoHabitacion(),
+                                                fechaEntradaFinal,
+                                                fechaSalidaFinal,
+                                                reserva.getId());
+
+                                        if (habitacionFinal == null) {
+
+                                        throw new HabitacionNoDisponibleException(
+                                                "No hay ninguna habitación disponible para ampliar la estancia.");
+                                        }
+                                }
+
+                                // comprobar capacidad de habitacionFinal
+                                if (numPaxFinal > habitacionFinal.getMaxPax()) {
+
+                                        throw new CapacidadHabitacionExcedidaException(
+                                                "La habitación " + habitacionFinal.getNumero()
+                                                + " admite un máximo de "
+                                                + habitacionFinal.getMaxPax()
+                                                + " huéspedes.");
+                                }
+
+                                // Calcular nuevo precio y asignar datos a reserva
+                                Double precioFinal = calcularPrecioTotal(
+                                        habitacionFinal,
+                                        fechaEntradaFinal,
+                                        fechaSalidaFinal);
+
+                                reserva.setHabitacion(habitacionFinal);
+                                reserva.setFechaSalida(fechaSalidaFinal);
+                                reserva.setPrecioTotal(precioFinal); 
+                        }                           
+                        
+                        // Adelantamos salida: No comprobar disponibilidad, solo recalcular precio
+                        if (request.getFechaSalida().isBefore(reserva.getFechaSalida())) {
+
+                                Double precioFinal = calcularPrecioTotal(
+                                        reserva.getHabitacion(),
+                                        fechaEntradaFinal,
+                                        fechaSalidaFinal);
+
+                                reserva.setFechaSalida(fechaSalidaFinal);
+                                reserva.setPrecioTotal(precioFinal);
+                        }
+                }
+
+                reserva.setNumPax(numPaxFinal);
+
+                reservaRepository.save(reserva);
+
+                return convertirAResponse(reserva);
         } else {
 
             throw new ReservaNoModificableException("La reserva con id " + id
@@ -600,6 +709,19 @@ public class ReservaService {
         }
 
         return habitacionesDisponibles.get(0);
+    }
+
+    private boolean habitacionDisponible(
+        Long habitacionId,
+        LocalDate fechaEntrada,
+        LocalDate fechaSalida,
+        Long reservaId) {
+
+        return habitacionRepository.habitacionDisponible(
+                habitacionId,
+                fechaEntrada,
+                fechaSalida,
+                reservaId);
     }
 
     private Double calcularPrecioTotal(
@@ -779,6 +901,67 @@ public class ReservaService {
         return convertirAResponse(reserva);
     }
 
+    public ReservaResponse hacerCheckout(Long id) {
+
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(() ->
+                        new ReservaNoEncontradaException(
+                                "No existe reserva con id " + id));
+
+        EstadoReserva estado = reserva.getEstadoReserva();
+
+        if (estado != EstadoReserva.OCUPADA) {
+                throw new ReservaNoOcupadaException(
+                        "La reserva con id " + id
+                        + " no está OCUPADA y no se puede realizar el checkout.");
+        }
+
+        // Comprobar pago total
+        if (reserva.getImportePagado() == null
+                || reserva.getImportePagado() < reserva.getPrecioTotal()) {
+
+                throw new PagoPendienteException(
+                        "No se puede realizar el checkout porque la reserva no está completamente pagada.");
+        }
+
+        reserva.setFechaHoraCheckout(LocalDateTime.now());
+        reserva.setEstadoReserva(EstadoReserva.FINALIZADA);
+
+        Reserva reservaFinalizada = reservaRepository.save(reserva);
+
+        return convertirAResponse(reservaFinalizada);
+    }
+
+    // Realizar check-out automático
+    public void finalizarReservasPorFechaSalida() {
+
+        LocalDate hoy = LocalDate.now();
+
+        // Buscar reservas que salen hoy y están CONFIRMADAS u OCUPADAS
+        List<Reserva> reservas = reservaRepository
+                .findByFechaSalidaAndEstadoReservaIn(
+                        hoy,
+                        List.of(EstadoReserva.CONFIRMADA, EstadoReserva.OCUPADA));
+
+        for (Reserva reserva : reservas) {
+
+                if (reserva.getEstadoReserva() == EstadoReserva.CONFIRMADA) {
+
+                // No-show
+                reserva.setEstadoReserva(EstadoReserva.FINALIZADA);
+
+                } else if (reserva.getEstadoReserva() == EstadoReserva.OCUPADA
+                        && reserva.getImportePagado() >= reserva.getPrecioTotal()) {
+
+                // Checkout automático
+                reserva.setFechaHoraCheckout(LocalDateTime.now());
+                reserva.setEstadoReserva(EstadoReserva.FINALIZADA);
+                }
+        }
+
+        reservaRepository.saveAll(reservas);
+    }
+
     // Convertir Reserva -> ReservaResponse
     private ReservaResponse convertirAResponse(Reserva reserva) {
 
@@ -787,10 +970,19 @@ public class ReservaService {
                 .map(this::convertirAcompananteResponse)
                 .toList();
 
+        HabitacionResponse habitacion = new HabitacionResponse(
+                reserva.getHabitacion().getId(),
+                reserva.getHabitacion().getTipoHabitacion(),
+                reserva.getHabitacion().getNumero(),
+                reserva.getHabitacion().getPrecioBase(),
+                reserva.getHabitacion().getMaxPax()
+        );
+
         return new ReservaResponse(
                 reserva.getId(),
                 reserva.getHabitacion().getHotel().getId(),
                 reserva.getHabitacion().getTipoHabitacion(),
+                habitacion,
                 reserva.getFechaCreacion(),
                 reserva.getFechaEntrada(),
                 reserva.getFechaSalida(),
@@ -802,6 +994,7 @@ public class ReservaService {
                 reserva.getImportePagado(),
                 reserva.getEstadoPago(),
                 reserva.getFechaHoraCheckin(),
+                reserva.getFechaHoraCheckout(),
                 acompanantes                
         );
     }

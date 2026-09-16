@@ -293,26 +293,26 @@ public class GlobalExceptionHandler {
         public ResponseEntity<ErrorResponse> manejarHabitacionYaExisteException(
                 HabitacionYaExisteException e) {
 
-        ErrorResponse error = new ErrorResponse(
-                e.getMessage(),
-                HttpStatus.CONFLICT.value());
+                ErrorResponse error = new ErrorResponse(
+                        e.getMessage(),
+                        HttpStatus.CONFLICT.value());
 
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(error);
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(error);
         }
 
         @ExceptionHandler(CapacidadHabitacionExcedidaException.class)
         public ResponseEntity<ErrorResponse> manejarCapacidadHabitacionExcedidaException(
                 CapacidadHabitacionExcedidaException e) {
 
-        ErrorResponse error = new ErrorResponse(
-                e.getMessage(),
-                HttpStatus.CONFLICT.value());
+                ErrorResponse error = new ErrorResponse(
+                        e.getMessage(),
+                        HttpStatus.CONFLICT.value());
 
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(error);
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(error);
         }
 
         @ExceptionHandler(ReservaNoConfirmadaException.class)
@@ -377,6 +377,45 @@ public class GlobalExceptionHandler {
 
                 return ResponseEntity
                         .status(HttpStatus.CONFLICT)
+                        .body(error);
+        }
+ 
+        @ExceptionHandler(ReservaNoOcupadaException.class)
+        public ResponseEntity<ErrorResponse> manejarReservaNoOcupadaException(
+                ReservaNoOcupadaException e) {
+
+                ErrorResponse error = new ErrorResponse(
+                        e.getMessage(),
+                        HttpStatus.CONFLICT.value());
+
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(error);
+        }
+ 
+        @ExceptionHandler(PagoPendienteException.class)
+        public ResponseEntity<ErrorResponse> manejarPagoPendienteException(
+                PagoPendienteException e) {
+
+                ErrorResponse error = new ErrorResponse(
+                        e.getMessage(),
+                        HttpStatus.CONFLICT.value());
+
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(error);
+        }
+        
+        @ExceptionHandler(FechaReservaInvalidaException.class)
+        public ResponseEntity<ErrorResponse> manejarFechaReservaInvalidaException(
+                FechaReservaInvalidaException e) {
+
+                ErrorResponse error = new ErrorResponse(
+                        "La fecha de salida no puede ser anterior ni igual a la de entrada.",
+                        HttpStatus.BAD_REQUEST.value());
+
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
                         .body(error);
         }
         

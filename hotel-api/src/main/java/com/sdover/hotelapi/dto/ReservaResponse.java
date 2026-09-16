@@ -12,10 +12,9 @@ import com.sdover.hotelapi.model.TipoHabitacion;
 public class ReservaResponse {
 
     private Long id;
-
     private Long hotelId;
-
     private TipoHabitacion tipoHabitacion;
+    private HabitacionResponse habitacion;
     
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime fechaCreacion;
@@ -33,6 +32,9 @@ public class ReservaResponse {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime fechaHoraCheckin;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime fechaHoraCheckout;
+
     private List<AcompananteResponse> acompanantes;
 
     public ReservaResponse() {
@@ -42,6 +44,7 @@ public class ReservaResponse {
             Long id,
             Long hotelId,
             TipoHabitacion tipoHabitacion,
+            HabitacionResponse habitacion,
             LocalDateTime fechaCreacion,
             LocalDate fechaEntrada,
             LocalDate fechaSalida,
@@ -53,12 +56,14 @@ public class ReservaResponse {
             Double importePagado,
             EstadoPago estadoPago,
             LocalDateTime fechaHoraCheckin,
+            LocalDateTime fechaHoraCheckout,
             List<AcompananteResponse> acompanantes
         ) {
 
         this.id = id;
         this.hotelId = hotelId;
         this.tipoHabitacion = tipoHabitacion;
+        this.habitacion = habitacion;
         this.fechaCreacion = fechaCreacion;
         this.fechaEntrada = fechaEntrada;
         this.fechaSalida = fechaSalida;
@@ -70,6 +75,7 @@ public class ReservaResponse {
         this.importePagado = importePagado;
         this.estadoPago = estadoPago;
         this.fechaHoraCheckin = fechaHoraCheckin;
+        this.fechaHoraCheckout = fechaHoraCheckout;
         this.acompanantes = acompanantes;
     }
 
@@ -193,4 +199,19 @@ public class ReservaResponse {
         this.acompanantes = acompanantes;
     }
 
+    public LocalDateTime getFechaHoraCheckout() {
+        return fechaHoraCheckout;
+    }
+
+    public void setFechaHoraCheckout(LocalDateTime fechaHoraCheckout) {
+        this.fechaHoraCheckout = fechaHoraCheckout;
+    }
+
+    public HabitacionResponse getHabitacion() {
+        return habitacion;
+    }
+
+    public void setHabitacion(HabitacionResponse habitacion) {
+        this.habitacion = habitacion;
+    }
 }
