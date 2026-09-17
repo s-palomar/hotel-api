@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ import com.sdover.hotelapi.exception.CapacidadHabitacionExcedidaException;
 import com.sdover.hotelapi.exception.CheckinFueraDeFechaException;
 import com.sdover.hotelapi.exception.ClienteNoCoincideException;
 import com.sdover.hotelapi.exception.ClienteNoEncontradoException;
+import com.sdover.hotelapi.exception.DatosIncorrectosException;
 import com.sdover.hotelapi.exception.FechaReservaInvalidaException;
 import com.sdover.hotelapi.exception.FechasReservaIncompletasException;
 import com.sdover.hotelapi.exception.FechasReservaInvalidasException;
@@ -791,7 +793,16 @@ public class ReservaService {
     
                 String dni = acompananteRequest.getDni();
 
-                Optional<Cliente> clienteExistente = clienteRepository.findByDni(dni);
+                Optional<Cliente> clienteExistente;
+
+                try {
+                        clienteExistente = clienteRepository.findByDni(dni);
+
+                } catch (IncorrectResultSizeDataAccessException e) {
+
+                        throw new DatosIncorrectosException(
+                                "Se han introducido datos incorrectos.");
+                }
 
                 if (clienteExistente.isPresent()) {
 

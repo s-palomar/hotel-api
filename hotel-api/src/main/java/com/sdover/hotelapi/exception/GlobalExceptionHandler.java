@@ -411,11 +411,24 @@ public class GlobalExceptionHandler {
                 FechaReservaInvalidaException e) {
 
                 ErrorResponse error = new ErrorResponse(
-                        "La fecha de salida no puede ser anterior ni igual a la de entrada.",
+                        "La fecha de entrada debe ser anterior a la de salida.",
                         HttpStatus.BAD_REQUEST.value());
 
                 return ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
+                        .body(error);
+        }
+        
+        @ExceptionHandler(DatosIncorrectosException.class)
+        public ResponseEntity<ErrorResponse> manejarDatosIncorrectosException(
+                DatosIncorrectosException e) {
+
+                ErrorResponse error = new ErrorResponse(
+                        e.getMessage(),
+                        HttpStatus.CONFLICT.value());
+
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
                         .body(error);
         }
         

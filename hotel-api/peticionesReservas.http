@@ -71,15 +71,15 @@ Content-Type: application/json
     "numPax": 2
 }
 
-### Crear reserva con num pax en hotel 22
+### Crear reserva con num pax en hotel 23
 POST http://localhost:8080/api/reservas
 Content-Type: application/json
 
 {
-    "hotelId": 22,
-    "tipoHabitacion": "DOBLE",
-    "fechaEntrada": "2026-09-19",
-    "fechaSalida": "2026-09-22",
+    "hotelId": 23,
+    "tipoHabitacion": "SUITE",
+    "fechaEntrada": "2026-09-17",
+    "fechaSalida": "2026-09-18",
     "clienteId": 1,
     "numPax": 2
 }
@@ -369,21 +369,21 @@ Content-Type: application/json
 }
 
 ### Actualizar fechas reserva confirmada >48h
-PATCH http://localhost:8080/api/reservas/35
+PATCH http://localhost:8080/api/reservas/48
 Content-Type: application/json
 
 {
-  "fechaEntrada": "2026-09-10",
-  "fechaSalida": "2026-09-14"
+  "fechaEntrada": "2026-09-16",
+  "fechaSalida": "2026-09-17"
 }
 
 ### Actualizar fechas reserva confirmada <48h
-PATCH http://localhost:8080/api/reservas/35
+PATCH http://localhost:8080/api/reservas/42
 Content-Type: application/json
 
 {
-  "fechaEntrada": "2026-09-10",
-  "fechaSalida": "2026-09-14",
+  "fechaEntrada": "2026-09-16",
+  "fechaSalida": "2026-09-17",
   "numPax": 4
 }
 
@@ -426,11 +426,11 @@ Content-Type: application/json
 {}
 
 ### Error validación: Sólo 1 fecha
-PATCH http://localhost:8080/api/reservas/17
+PATCH http://localhost:8080/api/reservas/47
 Content-Type: application/json
 
 {
-  "fechaEntrada": "2026-09-10"
+  "fechaEntrada": "2026-09-17"
 }
 
 ### Error validación: cliente inexistente
@@ -486,7 +486,7 @@ Content-Type: application/json
 }
 
 ### Probar checkin con fecha correcta
-PATCH http://localhost:8080/api/reservas/40/checkin
+PATCH http://localhost:8080/api/reservas/42/checkin
 Content-Type: application/json
 
 {
@@ -532,7 +532,7 @@ Content-Type: application/json
 }
 
 ### Checkin con acompañanante existente
-PATCH http://localhost:8080/api/reservas/46/checkin
+PATCH http://localhost:8080/api/reservas/50/checkin
 Content-Type: application/json
 
 {
@@ -551,19 +551,19 @@ Content-Type: application/json
 }
 
 ### Realizar pago inicial de reserva
-POST http://localhost:8080/api/reservas/49/pagos
+POST http://localhost:8080/api/reservas/42/pagos
 Content-Type: application/json
 
 {
-  "importe": 300.0
+  "importe": 510.0
 }
 
 ### Completar pago de reserva
-POST http://localhost:8080/api/reservas/37/pagos
+POST http://localhost:8080/api/reservas/50/pagos
 Content-Type: application/json
 
 {
-    "importe": 410.0
+    "importe": 100.0
 }
 
 ### Ver acompañantes de reserva
@@ -579,10 +579,10 @@ Content-Type: application/json
 }
 
 ### confirmar reserva 
-PUT http://localhost:8080/api/reservas/46/confirmar
+PUT http://localhost:8080/api/reservas/50/confirmar
 
 ### Hacer checkout reserva pagada
-PUT http://localhost:8080/api/reservas/43/checkout
+PUT http://localhost:8080/api/reservas/48/checkout
 
 ### Probar finalizacion Scheduler
 GET http://localhost:8080/api/reservas/probar-finalizacion
