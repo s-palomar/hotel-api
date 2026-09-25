@@ -1,5 +1,7 @@
 package com.sdover.hotelapi.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,16 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sdover.hotelapi.dto.HabitacionRequest;
 import com.sdover.hotelapi.dto.HabitacionResponse;
 import com.sdover.hotelapi.dto.HabitacionUpdateRequest;
-import com.sdover.hotelapi.dto.HotelResponse;
 import com.sdover.hotelapi.service.HabitacionService;
-
-import java.util.List;
 
 import jakarta.validation.Valid;
 
@@ -49,6 +47,13 @@ public class HabitacionController {
             @PathVariable Long hotelId) {
 
         return habitacionService.obtenerHabitacionesHotel(hotelId);
+    }
+
+    // GET: /api/habitaciones
+    @GetMapping
+    public List<HabitacionResponse> obtenerHabitaciones() {
+
+        return habitacionService.obtenerHabitaciones();
     }
 
     // GET /api/habitaciones/{id}
