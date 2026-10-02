@@ -237,6 +237,13 @@ body {
     font-size: 13px;
 }
 
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 0 12px;
+}
 
 /* =========================================================
    PAGE CONTENT
@@ -497,6 +504,73 @@ tbody tr:hover {
 
     box-shadow:
         0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.45);
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 1000;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal {
+    background: var(--color-surface);
+    width: 100%;
+    max-width: 500px;
+
+    border-radius: 10px;
+    padding: 24px;
+
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 24px;
+}
+
+.modal-header h3 {
+    margin: 0;
+}
+
+.modal-close {
+    border: none;
+    background: transparent;
+
+    font-size: 24px;
+    cursor: pointer;
+
+    color: var(--color-text-secondary);
+}
+
+.modal-close:hover {
+    color: var(--color-text);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 24px;
 }
 
 

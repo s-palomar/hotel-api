@@ -418,6 +418,19 @@ public class GlobalExceptionHandler {
                         .status(HttpStatus.BAD_REQUEST)
                         .body(error);
         }
+
+        @ExceptionHandler(HabitacionConReservasActivasException.class)
+        public ResponseEntity<ErrorResponse> manejarHabitacionConReservasActivasException(
+                HabitacionConReservasActivasException e) {
+
+                ErrorResponse error = new ErrorResponse(
+                        "La habitación tiene reservas activas, no se pueden hacer cambios.",
+                        HttpStatus.BAD_REQUEST.value());
+
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(error);
+        }
         
         @ExceptionHandler(DatosIncorrectosException.class)
         public ResponseEntity<ErrorResponse> manejarDatosIncorrectosException(

@@ -5,6 +5,7 @@ import com.sdover.hotelapi.model.TipoHabitacion;
 public class HabitacionResponse {
 
     private Long id;
+    private String hotelNombre;
     private TipoHabitacion tipoHabitacion;
     private String numero;
     private Double precioBase;
@@ -14,12 +15,14 @@ public class HabitacionResponse {
 
     public HabitacionResponse (
         Long id,
+        String hotelNombre,
         TipoHabitacion tipoHabitacion,
         String numero,
         Double precioBase,
         Integer maxPax
     ) {
         this.id = id;
+        this.hotelNombre = hotelNombre;
         this.tipoHabitacion = tipoHabitacion;
         this.numero = numero;
         this.precioBase = precioBase;
@@ -64,5 +67,13 @@ public class HabitacionResponse {
 
     public void setMaxPax(Integer maxPax) {
         this.maxPax = maxPax;
+    }
+
+    public String getHotelNombre() {
+        return hotelNombre;
+    }
+
+    public void setHotelNombre(String hotelNombre) {
+        this.hotelNombre = hotelNombre;
     }
 }

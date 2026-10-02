@@ -157,6 +157,7 @@ public class ClienteService {
 
         HabitacionResponse habitacion = new HabitacionResponse(
                 reserva.getHabitacion().getId(),
+                reserva.getHabitacion().getHotel().getNombre(),
                 reserva.getHabitacion().getTipoHabitacion(),
                 reserva.getHabitacion().getNumero(),
                 reserva.getHabitacion().getPrecioBase(),

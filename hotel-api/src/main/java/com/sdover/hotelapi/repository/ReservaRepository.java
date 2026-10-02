@@ -23,6 +23,9 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
         boolean existsByClienteIdAndEstadoReserva(Long clienteId, EstadoReserva estadoReserva);
 
+        // ¿Existe alguna reserva para esta habitación cuyo estado esté dentro de esta lista?
+        boolean existsByHabitacionIdAndEstadoReservaIn(Long habitacionId, List<EstadoReserva> estados);
+
         List<Reserva> findByEstadoReservaAndFechaCreacionBefore(EstadoReserva estadoReserva, LocalDateTime fecha);
 
         List<Reserva> findByFechaSalidaAndEstadoReservaIn(LocalDate fechaSalida, List<EstadoReserva> estados);
@@ -40,5 +43,5 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
                 @Param("estadoCancelada") EstadoReserva estadoCancelada,
                 @Param("fechaEntrada") LocalDate fechaEntrada,
                 @Param("fechaSalida") LocalDate fechaSalida);
-
+          
 }

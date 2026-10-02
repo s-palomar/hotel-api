@@ -80,7 +80,6 @@ The API currently supports:
 
 The project follows a layered architecture:
 
-```text
 Controller
     ↓
 Service
@@ -90,11 +89,9 @@ Repository
 JPA / Hibernate
     ↓
 H2 Database
-```
 
 Additional layers are used to keep the API contract and error handling separate from the persistence model:
 
-```text
 hotel-api
 │
 ├── controller
@@ -105,7 +102,6 @@ hotel-api
 ├── exception
 ├── scheduler
 └── config
-```
 
 ### Controller
 
@@ -168,13 +164,11 @@ Time-dependent processes are separated from the business logic.
 
 The scheduler determines **when** a process is executed, while the service determines **what business rules** are applied.
 
----
 
 # Domain Model
 
 The main entities are:
 
-```text
 Hotel
  └── 1:N ──> Habitacion
                  │
@@ -183,7 +177,6 @@ Hotel
                                ├── N:1 ──> Cliente
                                │
                                └── 1:N ──> Acompanante
-```
 
 ## Hotel
 
@@ -246,13 +239,11 @@ A companion is stored as a reservation-specific snapshot.
 
 This allows the reservation to preserve the companion's information at the time of the stay, even if the client's information changes later.
 
----
 
 # Reservation States
 
 Reservations use the following states:
 
-```text
 PENDIENTE
     │
     ▼
@@ -263,13 +254,10 @@ OCUPADA
     │
     ▼
 FINALIZADA
-```
 
 A reservation can also become:
 
-```text
 PENDIENTE ──> CANCELADA
-```
 
 depending on the business rules.
 
@@ -295,23 +283,19 @@ The stay has ended either through manual checkout or automatic finalization.
 
 The reservation has been cancelled and no longer blocks room availability.
 
----
 
 # Payment States
 
 Payments use:
 
-```text
 PENDIENTE
 PARCIAL
 COMPLETADO
-```
 
 A reservation must have at least **50% of its total price paid before it can be confirmed**.
 
 Checkout requires the reservation to be completely paid.
 
----
 
 # Room Availability
 
@@ -319,11 +303,9 @@ Room availability is calculated using the reservation dates.
 
 Two reservations overlap when:
 
-```text
 existingEntry < requestedExit
 AND
 existingExit > requestedEntry
-```
 
 This means that a reservation ending on the same day another reservation begins does not create an overlap.
 
@@ -331,28 +313,22 @@ Cancelled reservations do not block room availability.
 
 When modifying a reservation, the current reservation is excluded from the availability check so that it does not conflict with itself.
 
----
 
 # Reservation Price
 
 The reservation price is calculated using:
 
-```text
 number of nights × room base price
-```
 
 For example:
 
-```text
 Check-in: 2026-09-10
 Check-out: 2026-09-13
 
 3 nights × 170 € = 510 €
-```
 
 The price is recalculated when a reservation change affects the room or the stay dates.
 
----
 
 # Check-in
 
@@ -368,17 +344,14 @@ Check-in is available when:
 
 When check-in succeeds:
 
-```text
 CONFIRMADA
      ↓
   OCUPADA
-```
 
 The server records the check-in timestamp.
 
 Companions can also be registered during the check-in process.
 
----
 
 # Checkout
 
@@ -388,11 +361,9 @@ The reservation must be completely paid.
 
 When checkout succeeds:
 
-```text
 OCUPADA
    ↓
 FINALIZADA
-```
 
 The server records `fechaHoraCheckout`.
 
@@ -402,7 +373,6 @@ Endpoint:
 PUT /api/reservas/{id}/checkout
 ```
 
----
 
 # Automatic Reservation Finalization
 
@@ -416,9 +386,7 @@ Two situations are handled:
 
 A `CONFIRMADA` reservation reaching its departure date is treated as a no-show and becomes:
 
-```text
-CONFIRMADA → FINALIZADA
-```
+
 
 No checkout timestamp is recorded because the guest never checked in.
 
@@ -426,13 +394,10 @@ No checkout timestamp is recorded because the guest never checked in.
 
 An `OCUPADA` reservation reaching its departure date is automatically checked out when it has been fully paid:
 
-```text
 OCUPADA → FINALIZADA
-```
 
 In this case, `fechaHoraCheckout` is recorded.
 
----
 
 # Error Handling
 
@@ -464,7 +429,6 @@ and returned using a common `ErrorResponse` structure.
 
 This allows the API to return consistent HTTP status codes and error messages.
 
----
 
 # Main Endpoints
 
@@ -529,7 +493,6 @@ GET /api/acompanantes/apellidos/{apellidos}
 GET /api/acompanantes/reserva/{reservaId}
 ```
 
----
 
 # Testing
 
@@ -580,7 +543,6 @@ Examples:
 - Automatic checkout of fully paid occupied reservations.
 - Automatic finalization of confirmed reservations without check-in.
 
----
 
 # Technologies
 
@@ -597,7 +559,6 @@ Examples:
 | DBeaver | Database inspection |
 | Git / GitHub | Version control |
 
----
 
 # Running the Project
 
@@ -611,23 +572,19 @@ The project can be started using the Maven Wrapper.
 
 ### Windows
 
-```bash
 mvnw.cmd spring-boot:run
-```
+
 
 ### Linux / macOS
 
-```bash
 ./mvnw spring-boot:run
-```
+
 
 Once started, the API is available at:
 
-```text
 http://localhost:8080
-```
 
----
+
 
 # Database
 
@@ -637,11 +594,9 @@ The database can be inspected with DBeaver using the configured H2 JDBC connecti
 
 The database is intended for development and demonstration purposes in the current version.
 
----
 
 # Project Structure
 
-```text
 src/
 └── main/
     └── java/
@@ -655,11 +610,9 @@ src/
             ├── exception/
             ├── scheduler/
             └── config/
-```
 
 The exact package structure may evolve as the project grows.
 
----
 
 # Current Status
 
@@ -692,7 +645,6 @@ Implemented:
 - Automatic reservation finalization
 - Business scenario testing
 
----
 
 # Future Improvements
 
@@ -715,7 +667,6 @@ Possible improvements include:
 - Improved monetary handling using `BigDecimal`.
 - Production-oriented configuration profiles.
 
----
 
 # Project Goals
 
@@ -729,7 +680,6 @@ Build a complete REST backend using modern Java and Spring Boot practices.
 
 Understand how the different parts of a Spring Boot application work together:
 
-```text
 HTTP Request
      ↓
 Controller
@@ -743,11 +693,8 @@ JPA / Hibernate
 Database
      ↓
 Response
-```
 
 The project therefore focuses not only on making the application work, but also on understanding the responsibilities of each layer and the flow of data through the application.
-
----
 
 # Author
 
@@ -757,7 +704,6 @@ DAW — Desarrollo de Aplicaciones Web
 
 Java · Spring Boot · REST APIs · JPA · SQL
 
----
 
 ## Repository
 
